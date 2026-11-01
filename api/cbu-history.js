@@ -5,7 +5,7 @@ module.exports = async function handler(request, response) {
     return;
   }
 
-  const requestUrl = new URL(request.url, `https://${request.headers.host || "convertion-pi.vercel.app"}`);
+  const requestUrl = new URL(request.url, `https://${request.headers.host || "convertion.uz"}`);
   const queryRate = typeof request.query?.rate === "string"
     ? request.query.rate
     : requestUrl.searchParams.get("rate");
@@ -24,7 +24,7 @@ module.exports = async function handler(request, response) {
       headers: {
         Accept: "application/json",
         Referer: "https://cbu.uz/",
-        "User-Agent": "Mozilla/5.0 (compatible; convertion-pi.vercel.app/1.0)"
+        "User-Agent": "Mozilla/5.0 (compatible; Convertion.uz/1.0)"
       },
       signal: controller.signal
     });
