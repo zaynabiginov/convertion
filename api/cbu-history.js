@@ -5,19 +5,27 @@ module.exports = async function handler(request, response) {
     return;
   }
 
-  const code = typeof request.query?.rate === "string" ? request.query.rate.toUpperCase() : "";
+  const requestUrl = new URL(request.url, `https://${request.headers.host || "convertion-pi.vercel.app"}`);
+  const queryRate = typeof request.query?.rate === "string"
+    ? request.query.rate
+    : requestUrl.searchParams.get("rate");
+  const code = typeof queryRate === "string" ? queryRate.toUpperCase() : "";
   if (!/^[A-Z]{3}$/.test(code)) {
     response.status(400).json({ error: "A valid three-letter currency code is required" });
     return;
   }
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 8000);
+  const timeoutId = setTimeout(() => controller.abort(), 5000);
 
   try {
     const url = `https://cbu.uz/common/json/amcharts.php?rate=${encodeURIComponent(code)}`;
     const upstream = await fetch(url, {
-      headers: { Accept: "application/json" },
+      headers: {
+        Accept: "application/json",
+        Referer: "https://cbu.uz/",
+        "User-Agent": "Mozilla/5.0 (compatible; convertion-pi.vercel.app/1.0)"
+      },
       signal: controller.signal
     });
     if (!upstream.ok) throw new Error(`CBU history returned HTTP ${upstream.status}`);
