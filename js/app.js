@@ -930,84 +930,6 @@
       if (moveFocus) ratesTabButtons[index].focus();
     }
 
-    function parseCbuDate(value) {
-      const match = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(value);
-      if (!match) throw new Error(`CBU returned an invalid date: "${value}"`);
-      return `${match[3]}-${match[2]}-${match[1]}`;
-    }
-
-    function historySampleDates(latestDate) {
-      const latest = new Date(`${latestDate}T00:00:00Z`);
-      const first = new Date("1994-12-29T00:00:00Z");
-      const recentStart = new Date(latest);
-      recentStart.setUTCFullYear(recentStart.getUTCFullYear() - 1);
-      const monthlyStart = new Date(latest);
-      monthlyStart.setUTCFullYear(monthlyStart.getUTCFullYear() - 7);
-      const dates = new Set([
-        first.toISOString().slice(0, 10),
-        monthlyStart.toISOString().slice(0, 10),
-        recentStart.toISOString().slice(0, 10),
-        latestDate
-      ]);
-
-      const quarterly = new Date(Date.UTC(first.getUTCFullYear(), first.getUTCMonth() + 1, 15));
-      while (quarterly < monthlyStart) {
-        if (quarterly.getUTCMonth() % 3 === 0) dates.add(quarterly.toISOString().slice(0, 10));
-        quarterly.setUTCMonth(quarterly.getUTCMonth() + 1);
-      }
-
-      const monthly = new Date(Date.UTC(monthlyStart.getUTCFullYear(), monthlyStart.getUTCMonth() + 1, 15));
-      while (monthly < recentStart) {
-        dates.add(monthly.toISOString().slice(0, 10));
-        monthly.setUTCMonth(monthly.getUTCMonth() + 1);
-      }
-
-      const weekly = new Date(recentStart);
-      while (weekly <= latest) {
-        dates.add(weekly.toISOString().slice(0, 10));
-        weekly.setUTCDate(weekly.getUTCDate() + 7);
-      }
-
-      return [...dates].sort();
-    }
-
-    async function fetchCbuRateAtDate(code, date, signal) {
-      const url = `https://cbu.uz/ru/arkhiv-kursov-valyut/json/${encodeURIComponent(code)}/${date}/`;
-      const response = await fetch(url, { signal });
-      if (!response.ok) throw new Error(`CBU history returned HTTP ${response.status} for ${date}`);
-      const data = await response.json();
-      if (!Array.isArray(data)) throw new Error(`CBU history response is not a data list for ${date}`);
-      if (!data.length) return null;
-
-      const item = data[0];
-      const nominal = Number(item.Nominal);
-      const rate = Number(item.Rate);
-      if (item.Ccy !== code || !Number.isFinite(rate) || rate <= 0 || !Number.isFinite(nominal) || nominal <= 0) {
-        throw new Error(`CBU returned an invalid ${code} rate for ${date}`);
-      }
-      return { date: parseCbuDate(item.Date), value: rate / nominal };
-    }
-
-    async function loadSampledCbuHistory(code, signal) {
-      const latest = await fetchCbuRateAtDate(code, new Date().toISOString().slice(0, 10), signal);
-      const dates = historySampleDates(latest.date).filter((date) => date !== latest.date);
-      const series = [latest];
-      let nextIndex = 0;
-      const workerCount = Math.min(24, dates.length);
-      const workers = Array.from({ length: workerCount }, async () => {
-        while (nextIndex < dates.length) {
-          const date = dates[nextIndex];
-          nextIndex += 1;
-          const point = await fetchCbuRateAtDate(code, date, signal);
-          if (point) series.push(point);
-        }
-      });
-      await Promise.all(workers);
-
-      const uniquePoints = new Map(series.map((point) => [point.date, point]));
-      return [...uniquePoints.values()].sort((left, right) => left.date.localeCompare(right.date));
-    }
-
     function updateHistoryScrollbar(bounds, viewStart, viewEnd) {
       const totalSpan = bounds.end - bounds.start;
       const viewSpan = viewEnd - viewStart;
@@ -1329,7 +1251,15 @@
             value: Number(item.value)
           }));
         } else {
-          series = await loadSampledCbuHistory(currency.code, controller.signal);
+          const url = `/api/cbu-history?rate=${encodeURIComponent(currency.code)}`;
+          const response = await fetch(url, { signal: controller.signal });
+          if (!response.ok) throw new Error(`CBU history returned HTTP ${response.status}`);
+          const data = await response.json();
+          if (!Array.isArray(data)) throw new Error("CBU history response is not a data list");
+          series = data.map((item) => ({
+            date: typeof item.date === "string" ? item.date : "",
+            value: Number(item.value)
+          }));
         }
         const hasInvalidPoint = series.some((point) => {
           if (!/^\d{4}-\d{2}-\d{2}$/.test(point.date) || !Number.isFinite(point.value) || point.value <= 0) return true;
