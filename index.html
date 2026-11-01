@@ -442,6 +442,50 @@
     .rates-more:hover { border-color: var(--accent); background: var(--accent-soft); transform: translateY(-1px); }
     .rates-more:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 3px; }
 
+    .commercial-rates-section { margin-top: 48px; }
+    .commercial-rates-controls { display: flex; align-items: flex-end; gap: 12px; }
+    .bank-select-label { display: grid; gap: 5px; color: var(--muted); font-size: 12px; font-weight: 600; }
+    .bank-select-label select {
+      width: min(320px, 70vw);
+      height: 42px;
+      padding: 0 38px 0 13px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      outline: none;
+      appearance: none;
+      background: var(--surface);
+      color: var(--text);
+      font: inherit;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .bank-select-label select:focus-visible { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent); }
+    .bank-select-label select:disabled { cursor: wait; opacity: .7; }
+    .bank-select-wrap { position: relative; }
+    .bank-select-wrap::after {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 8px;
+      height: 8px;
+      border-right: 1.5px solid var(--muted);
+      border-bottom: 1.5px solid var(--muted);
+      content: "";
+      pointer-events: none;
+      transform: rotate(45deg);
+    }
+    .bank-rates-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+    .bank-rates-table { width: 100%; border-collapse: collapse; text-align: left; }
+    .bank-rates-table th, .bank-rates-table td { padding: 14px 18px; border-bottom: 1px solid var(--line); }
+    .bank-rates-table th { background: var(--surface-soft); color: var(--muted); font-size: 12px; font-weight: 650; }
+    .bank-rates-table td { font-size: 14px; }
+    .bank-rates-table tbody tr:last-child td { border-bottom: 0; }
+    .bank-rates-table tbody td:not(:first-child) { font-variant-numeric: tabular-nums; font-weight: 650; }
+    .bank-rates-table tbody td:first-child { color: var(--text); font-weight: 700; }
+    .bank-rates-status, .bank-rates-disclaimer { margin: 10px 0 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .bank-rates-source { color: var(--accent-strong); font-weight: 650; }
+    .bank-rates-source:hover { text-decoration: underline; }
+
     .history-dialog {
       width: min(1180px, calc(100vw - 48px));
       max-width: calc(100vw - 24px);
@@ -641,6 +685,11 @@
       .rates-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
       .rate-card { align-items: flex-start; flex-direction: column; gap: 10px; padding: 13px; }
       .rate-value { text-align: left; }
+      .commercial-rates-section { margin-top: 38px; }
+      .commercial-rates-controls { width: 100%; align-items: stretch; flex-direction: column; }
+      .bank-select-label select { width: 100%; }
+      .bank-rates-table th, .bank-rates-table td { padding: 12px 10px; }
+      .bank-rates-table th, .bank-rates-table td { font-size: 12px; }
       .history-controls { align-items: stretch; flex-direction: column; }
       .history-controls label, .history-controls input { width: 100%; }
       .history-chart { min-height: 190px; flex-basis: 240px; }
@@ -805,6 +854,42 @@
         <p class="rate-empty" id="rate-empty" hidden data-i18n="noRatesFound">Ничего не найдено</p>
       </section>
 
+      <section class="commercial-rates-section" id="bank-rates" aria-labelledby="bank-rates-title">
+        <div class="section-heading">
+          <div>
+            <div class="section-kicker" data-i18n="bankRatesKicker">КУРСЫ БАНКОВ</div>
+            <h2 id="bank-rates-title" data-i18n="bankRatesTitle">Курсы коммерческих банков</h2>
+          </div>
+          <div class="commercial-rates-controls">
+            <label class="bank-select-label" for="bank-select">
+              <span data-i18n="bankSelectLabel">Выберите банк</span>
+              <span class="bank-select-wrap">
+                <select id="bank-select" disabled aria-describedby="bank-rates-status">
+                  <option value="" data-i18n="bankSelectLoading">Загрузка списка банков…</option>
+                </select>
+              </span>
+            </label>
+          </div>
+        </div>
+        <div class="bank-rates-table-wrap">
+          <table class="bank-rates-table">
+            <thead>
+              <tr>
+                <th scope="col" data-i18n="bankCurrency">Валюта</th>
+                <th scope="col" data-i18n="bankBuy">Покупка</th>
+                <th scope="col" data-i18n="bankSell">Продажа</th>
+              </tr>
+            </thead>
+            <tbody id="bank-rates-body"></tbody>
+          </table>
+        </div>
+        <p class="bank-rates-status" id="bank-rates-status" role="status" aria-live="polite"></p>
+        <p class="bank-rates-disclaimer">
+          <span data-i18n="bankRatesDisclaimer">Курсы покупки и продажи предоставляет Bank.uz; перед обменом уточняйте курс в банке.</span>
+          <a class="bank-rates-source" href="https://bank.uz/uz/currency" target="_blank" rel="noopener noreferrer" data-i18n="bankRatesSource">Источник: Bank.uz</a>
+        </p>
+      </section>
+
       <dialog class="history-dialog" id="history-dialog" aria-labelledby="history-title">
         <div class="history-dialog-inner">
           <div class="history-heading">
@@ -919,6 +1004,12 @@
         pageIntro: "Мировые валюты. Понятные цифры. Переводите в сумы и обратно за пару секунд.",
         calculator: "Калькулятор валют", autoCalc: "Автоматический расчет", amount: "Сумма", from: "Из", to: "В",
         result: "Результат", currencies: "МИРОВЫЕ ВАЛЮТЫ", ratesTitle: "Текущие курсы валют",
+        bankRatesKicker: "КУРСЫ БАНКОВ", bankRatesTitle: "Курсы коммерческих банков",
+        bankSelectLabel: "Выберите банк", bankSelectLoading: "Загрузка списка банков…",
+        bankSelectPlaceholder: "Выберите банк", bankCurrency: "Валюта", bankBuy: "Покупка", bankSell: "Продажа",
+        bankRatesLoading: "Загружаем курсы банков…", bankRatesError: "Не удалось загрузить курсы банков. Попробуйте позже.",
+        bankRatesSource: "Источник: Bank.uz", bankRatesUpdated: "Получено",
+        bankRatesDisclaimer: "Курсы покупки и продажи предоставляет Bank.uz; перед обменом уточняйте курс в банке.",
         ratesNote: "Сумма в валюте → UZS", reverseRatesNote: "Сумма в UZS → валюта",
         rateAmount: "Сумма", reverseRates: "Обратный курс",
         searchPlaceholder: "Поиск по стране или валюте", searchLabel: "Поиск по стране или названию валюты",
@@ -927,7 +1018,7 @@
         themeLight: "Светлая тема", themeDark: "Тёмная тема", languageLabel: "Выбор языка", displayPreferences: "Настройки отображения",
         international: "Международная расчётная единица", aboutTitle: "О конвертере валют", aboutEasyTitle: "Просто и удобно",
         aboutEasyText: "Введите сумму, выберите валюты — результат пересчитывается автоматически. Кнопка со стрелками меняет направления конвертации местами.",
-        aboutRatesTitle: "Официальные курсы", aboutRatesText: "Курсы загружаются с сайта Центрального банка Республики Узбекистан.",
+        aboutRatesTitle: "Официальные курсы", aboutRatesText: "Официальные курсы загружаются с сайта Центрального банка, курсы банков — с Bank.uz.",
         aboutCurrenciesTitle: "Поддерживаемые валюты", aboutCurrenciesText: "Доллар США, евро, российский рубль и другие валюты к узбекскому суму.",
         footer: "Convertion.uz · Курсы валют Центрального банка Узбекистана",
         loadingRates: "Загружаем официальный курс…", loadError: "Не удалось загрузить курсы ЦБ. Проверьте подключение и откройте страницу через веб-сервер.",
@@ -950,6 +1041,12 @@
         pageIntro: "Jahon valyutalari. Aniq hisob-kitob. So'mga va aksincha bir necha soniyada o'tkazing.",
         calculator: "Valyuta kalkulyatori", autoCalc: "Avtomatik hisob-kitob", amount: "Miqdor", from: "Dan", to: "Ga",
         result: "Natija", currencies: "JAHON VALYUTALARI", ratesTitle: "Joriy valyuta kurslari",
+        bankRatesKicker: "BANK KURSLARI", bankRatesTitle: "Tijorat banklari valyuta kurslari",
+        bankSelectLabel: "Bankni tanlang", bankSelectLoading: "Banklar ro'yxati yuklanmoqda…",
+        bankSelectPlaceholder: "Bankni tanlang", bankCurrency: "Valyuta", bankBuy: "Sotib olish", bankSell: "Sotish",
+        bankRatesLoading: "Bank kurslari yuklanmoqda…", bankRatesError: "Bank kurslarini yuklab bo'lmadi. Keyinroq urinib ko'ring.",
+        bankRatesSource: "Manba: Bank.uz", bankRatesUpdated: "Yuklandi",
+        bankRatesDisclaimer: "Sotib olish va sotish kurslari Bank.uz tomonidan taqdim etilgan; almashtirishdan oldin bankdan aniqlashtiring.",
         ratesNote: "Valyuta miqdori → UZS", reverseRatesNote: "UZS miqdori → valyuta",
         rateAmount: "Miqdor", reverseRates: "Teskari kurs",
         searchPlaceholder: "Mamlakat yoki valyuta bo'yicha qidirish", searchLabel: "Mamlakat yoki valyuta nomi bo'yicha qidirish",
@@ -958,7 +1055,7 @@
         themeLight: "Yorug' mavzu", themeDark: "Qorong'i mavzu", languageLabel: "Tilni tanlash", displayPreferences: "Ko'rinish sozlamalari",
         international: "Xalqaro hisob-kitob birligi", aboutTitle: "Valyuta konvertori haqida", aboutEasyTitle: "Oddiy va qulay",
         aboutEasyText: "Miqdorni kiriting va valyutalarni tanlang — natija avtomatik hisoblanadi. Strelkali tugma konvertatsiya yo'nalishini almashtiradi.",
-        aboutRatesTitle: "Rasmiy kurslar", aboutRatesText: "Kurslar O'zbekiston Respublikasi Markaziy banki saytidan yuklanadi.",
+        aboutRatesTitle: "Rasmiy kurslar", aboutRatesText: "Rasmiy kurslar Markaziy bankdan, bank kurslari esa Bank.uz saytidan yuklanadi.",
         aboutCurrenciesTitle: "Qo'llab-quvvatlanadigan valyutalar", aboutCurrenciesText: "AQSH dollari, yevro, Rossiya rubli va boshqa valyutalar o'zbek so'miga nisbatan.",
         footer: "Convertion.uz · O'zbekiston Markaziy bankining valyuta kurslari",
         loadingRates: "Rasmiy kurs yuklanmoqda…", loadError: "Markaziy bank kurslarini yuklab bo'lmadi. Internetni tekshiring va sahifani veb-server orqali oching.",
@@ -981,6 +1078,12 @@
         pageIntro: "World currencies. Clear numbers. Convert to and from Uzbek som in seconds.",
         calculator: "Currency calculator", autoCalc: "Automatic calculation", amount: "Amount", from: "From", to: "To",
         result: "Result", currencies: "WORLD CURRENCIES", ratesTitle: "Current exchange rates",
+        bankRatesKicker: "BANK RATES", bankRatesTitle: "Commercial bank exchange rates",
+        bankSelectLabel: "Select a bank", bankSelectLoading: "Loading bank list…",
+        bankSelectPlaceholder: "Select a bank", bankCurrency: "Currency", bankBuy: "Buy", bankSell: "Sell",
+        bankRatesLoading: "Loading bank rates…", bankRatesError: "Could not load bank rates. Please try again later.",
+        bankRatesSource: "Source: Bank.uz", bankRatesUpdated: "Fetched",
+        bankRatesDisclaimer: "Buy and sell rates are provided by Bank.uz; confirm the rate with the bank before exchanging.",
         ratesNote: "Currency amount → UZS", reverseRatesNote: "UZS amount → currency",
         rateAmount: "Amount", reverseRates: "Reverse rate",
         searchPlaceholder: "Search by country or currency", searchLabel: "Search by country or currency name",
@@ -989,7 +1092,7 @@
         themeLight: "Light theme", themeDark: "Dark theme", languageLabel: "Choose language", displayPreferences: "Display settings",
         international: "International reserve asset", aboutTitle: "About the currency converter", aboutEasyTitle: "Simple and convenient",
         aboutEasyText: "Enter an amount and choose currencies — the result updates automatically. Use the arrow button to swap conversion directions.",
-        aboutRatesTitle: "Official exchange rates", aboutRatesText: "Rates are retrieved from the Central Bank of the Republic of Uzbekistan.",
+        aboutRatesTitle: "Official exchange rates", aboutRatesText: "Official rates come from the Central Bank; commercial bank rates are provided by Bank.uz.",
         aboutCurrenciesTitle: "Supported currencies", aboutCurrenciesText: "US dollar, euro, Russian ruble, and more currencies against the Uzbek som.",
         footer: "Convertion.uz · Central Bank of Uzbekistan exchange rates",
         loadingRates: "Loading official exchange rates…", loadError: "Could not load Central Bank rates. Check your connection and open this page through a web server.",
@@ -1028,6 +1131,8 @@
     }
 
     const apiUrl = "https://cbu.uz/ru/arkhiv-kursov-valyut/json/";
+    const bankRatesApiUrl = "https://bank.uz/uz/currency";
+    const commercialRateCodes = ["USD", "RUB", "EUR", "GBP", "KZT"];
     const amountInput = document.querySelector("#amount");
     const fromSelect = document.querySelector("#from-currency");
     const toSelect = document.querySelector("#to-currency");
@@ -1042,6 +1147,9 @@
     const ratesMoreButton = document.querySelector("#rates-more");
     const ratesNote = document.querySelector("#rates-note");
     const rateViewToggle = document.querySelector("#rate-view-toggle");
+    const bankSelect = document.querySelector("#bank-select");
+    const bankRatesBody = document.querySelector("#bank-rates-body");
+    const bankRatesStatus = document.querySelector("#bank-rates-status");
     const historyDialog = document.querySelector("#history-dialog");
     const historyTitle = document.querySelector("#history-title");
     const historySubtitle = document.querySelector("#history-subtitle");
@@ -1066,6 +1174,10 @@
     let officialRateDate = null;
     let rateLoadFailed = false;
     let rateRequestInProgress = false;
+    let commercialBankRates = new Map();
+    let bankRatesFetchedAt = null;
+    let bankRatesLoadFailed = false;
+    let bankRatesRequestInProgress = false;
     let showReverseRates = false;
     let showAllRates = false;
     let rateListAnimationTimer = null;
@@ -1098,6 +1210,135 @@
 
     function formatNumber(value, options) {
       return new Intl.NumberFormat(localeCodes[activeLanguage], options).format(value);
+    }
+
+    function updateCommercialBankStatus() {
+      const labels = translations[activeLanguage];
+      if (bankRatesLoadFailed) {
+        bankRatesStatus.textContent = labels.bankRatesError;
+        return;
+      }
+      if (!bankRatesFetchedAt) {
+        bankRatesStatus.textContent = labels.bankRatesLoading;
+        return;
+      }
+      const fetchedAt = new Intl.DateTimeFormat(localeCodes[activeLanguage], {
+        dateStyle: "medium",
+        timeStyle: "short"
+      }).format(bankRatesFetchedAt);
+      bankRatesStatus.textContent = `${labels.bankRatesUpdated}: ${fetchedAt}`;
+    }
+
+    function renderCommercialBankRates() {
+      bankRatesBody.replaceChildren();
+      const selectedBank = commercialBankRates.get(bankSelect.value);
+      if (!selectedBank) return;
+
+      commercialRateCodes.forEach((code) => {
+        const row = document.createElement("tr");
+        const currencyCell = document.createElement("td");
+        const buyCell = document.createElement("td");
+        const sellCell = document.createElement("td");
+        currencyCell.textContent = code;
+        const rates = selectedBank.rates[code];
+        buyCell.textContent = rates?.buy === null || rates?.buy === undefined
+          ? "—"
+          : formatNumber(rates.buy, { maximumFractionDigits: 2 });
+        sellCell.textContent = rates?.sell === null || rates?.sell === undefined
+          ? "—"
+          : formatNumber(rates.sell, { maximumFractionDigits: 2 });
+        row.append(currencyCell, buyCell, sellCell);
+        bankRatesBody.append(row);
+      });
+    }
+
+    function parseCommercialRate(value) {
+      const numericText = value.replace(/[^\d,.-]/g, "");
+      const normalized = numericText.includes(",") && !numericText.includes(".")
+        ? numericText.replace(",", ".")
+        : numericText.replace(/,/g, "");
+      const rate = Number(normalized);
+      if (!Number.isFinite(rate) || rate < 0) {
+        throw new Error(`Bank.uz returned an invalid exchange rate: "${value}"`);
+      }
+      return rate;
+    }
+
+    async function loadCommercialBankRates() {
+      if (bankRatesRequestInProgress) return;
+      bankRatesRequestInProgress = true;
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(() => controller.abort(), 12000);
+      try {
+        if (!commercialBankRates.size) {
+          bankSelect.disabled = true;
+          bankSelect.replaceChildren(new Option(translations[activeLanguage].bankSelectLoading, ""));
+          updateCommercialBankStatus();
+        }
+        const response = await fetch(bankRatesApiUrl, {
+          cache: "no-store",
+          credentials: "omit",
+          signal: controller.signal
+        });
+        if (!response.ok) throw new Error(`Bank.uz returned HTTP ${response.status}`);
+        const html = await response.text();
+        const sourceDocument = new DOMParser().parseFromString(html, "text/html");
+        const parsedRates = new Map();
+
+        commercialRateCodes.forEach((code) => {
+          const currencyPanel = sourceDocument.getElementById(`best_${code}`);
+          if (!currencyPanel) throw new Error(`Bank.uz response is missing ${code} rates`);
+
+          [
+            ["buy", ".bc-inner-blocks-left"],
+            ["sell", ".bc-inner-blocks-right"]
+          ].forEach(([rateType, containerSelector]) => {
+            const container = currencyPanel.querySelector(containerSelector);
+            const rows = container?.querySelectorAll(".bc-inner-block-left-texts") || [];
+            if (!rows.length) throw new Error(`Bank.uz response is missing ${rateType} rates for ${code}`);
+
+            rows.forEach((row) => {
+              const bankLink = row.querySelector('a[href*="/currency/bank/"]');
+              const rateElement = row.querySelector(".green-date, .red-date");
+              const bankName = bankLink?.textContent.trim().replace(/\s+/g, " ");
+              const bankSlug = bankLink?.getAttribute("href")?.split("/").filter(Boolean).pop();
+              if (!bankName || !bankSlug || !rateElement) {
+                throw new Error(`Bank.uz returned an incomplete ${rateType} quote for ${code}`);
+              }
+
+              const bank = parsedRates.get(bankSlug) || { name: bankName, rates: {} };
+              bank.rates[code] ||= { buy: null, sell: null };
+              bank.rates[code][rateType] = parseCommercialRate(rateElement.textContent);
+              parsedRates.set(bankSlug, bank);
+            });
+          });
+        });
+        if (!parsedRates.size) throw new Error("Bank.uz response contains no commercial bank rates");
+
+        const previousBank = bankSelect.value;
+        commercialBankRates = parsedRates;
+        bankSelect.replaceChildren(...[...parsedRates.entries()]
+          .sort((left, right) => left[1].name.localeCompare(right[1].name, localeCodes[activeLanguage]))
+          .map(([slug, bank]) => new Option(bank.name, slug)));
+        bankSelect.disabled = false;
+        bankSelect.value = parsedRates.has(previousBank) ? previousBank : bankSelect.options[0].value;
+        bankRatesFetchedAt = new Date();
+        bankRatesLoadFailed = false;
+        renderCommercialBankRates();
+        updateCommercialBankStatus();
+      } catch (error) {
+        console.error("Could not load commercial bank exchange rates from Bank.uz:", error);
+        bankRatesLoadFailed = true;
+        if (!commercialBankRates.size) {
+          bankSelect.replaceChildren(new Option(translations[activeLanguage].bankRatesError, ""));
+          bankSelect.disabled = true;
+          renderCommercialBankRates();
+        }
+        updateCommercialBankStatus();
+      } finally {
+        window.clearTimeout(timeoutId);
+        bankRatesRequestInProgress = false;
+      }
     }
 
     function updateRateStatus() {
@@ -1715,6 +1956,11 @@
       buildOptions();
       updateRateControls();
       renderRateCards();
+      if (bankRatesLoadFailed && !commercialBankRates.size) {
+        bankSelect.replaceChildren(new Option(translations[language].bankRatesError, ""));
+      }
+      renderCommercialBankRates();
+      updateCommercialBankStatus();
       updateRateStatus();
       updateConversion();
       applyTheme(document.documentElement.dataset.theme === "light" ? "light" : "dark");
@@ -1831,6 +2077,7 @@
     });
 
     languageSelect.addEventListener("change", () => setLanguage(languageSelect.value));
+    bankSelect.addEventListener("change", renderCommercialBankRates);
 
     rateSearch.addEventListener("input", () => {
       showAllRates = false;
@@ -1969,11 +2216,18 @@
     });
 
     loadOfficialRates();
+    loadCommercialBankRates();
     window.setInterval(() => {
-      if (document.visibilityState === "visible") loadOfficialRates();
+      if (document.visibilityState === "visible") {
+        loadOfficialRates();
+        loadCommercialBankRates();
+      }
     }, 30 * 60 * 1000);
     document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "visible") loadOfficialRates();
+      if (document.visibilityState === "visible") {
+        loadOfficialRates();
+        loadCommercialBankRates();
+      }
     });
   </script>
 </body>
