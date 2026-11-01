@@ -469,46 +469,47 @@
     .rates-more:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 3px; }
 
     .commercial-rates-section { margin-top: 48px; }
-    .commercial-rates-controls { display: flex; align-items: flex-end; gap: 12px; }
-    .bank-select-label { display: grid; gap: 5px; color: var(--muted); font-size: 12px; font-weight: 600; }
-    .bank-select-label select {
-      width: min(320px, 70vw);
+    .bank-filter-controls { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; margin-bottom: 16px; }
+    .bank-filter-label { display: grid; flex: 1 1 145px; gap: 5px; color: var(--muted); font-size: 12px; font-weight: 600; }
+    .bank-filter-label input, .bank-filter-label select {
+      width: 100%;
       height: 42px;
-      padding: 0 38px 0 13px;
+      padding: 0 12px;
       border: 1px solid var(--line);
       border-radius: 11px;
       outline: none;
-      appearance: none;
       background: var(--surface);
       color: var(--text);
       font: inherit;
       font-size: 14px;
-      cursor: pointer;
     }
-    .bank-select-label select:focus-visible { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent); }
-    .bank-select-label select:disabled { cursor: wait; opacity: .7; }
-    .bank-select-wrap { position: relative; }
-    .bank-select-wrap::after {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      width: 8px;
-      height: 8px;
-      border-right: 1.5px solid var(--muted);
-      border-bottom: 1.5px solid var(--muted);
-      content: "";
-      pointer-events: none;
-      transform: rotate(45deg);
-    }
+    .bank-filter-label input:focus-visible, .bank-filter-label select:focus-visible { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent); }
     .bank-rates-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
     .bank-rates-table { width: 100%; border-collapse: collapse; text-align: left; }
     .bank-rates-table th, .bank-rates-table td { padding: 14px 18px; border-bottom: 1px solid var(--line); }
     .bank-rates-table th { background: var(--surface-soft); color: var(--muted); font-size: 12px; font-weight: 650; }
+    .bank-sort-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+      font: inherit;
+      font-weight: inherit;
+      text-align: left;
+    }
+    .bank-sort-button:hover, .bank-rates-table th[aria-sort="ascending"] .bank-sort-button, .bank-rates-table th[aria-sort="descending"] .bank-sort-button { color: var(--accent-strong); }
+    .bank-sort-button:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 3px; border-radius: 3px; }
+    .bank-sort-indicator { color: var(--accent-strong); font-size: 11px; }
     .bank-rates-table td { font-size: 14px; }
     .bank-rates-table tbody tr:last-child td { border-bottom: 0; }
-    .bank-rates-table tbody td:not(:first-child) { font-variant-numeric: tabular-nums; font-weight: 650; }
+    .bank-rates-table tbody td:not(:first-child) { font-variant-numeric: tabular-nums; font-weight: 650; white-space: nowrap; }
     .bank-rates-table tbody td:first-child { color: var(--text); font-weight: 700; }
-    .bank-rates-status, .bank-rates-disclaimer { margin: 10px 0 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .bank-rates-status, .bank-rates-count, .bank-rates-empty, .bank-rates-disclaimer { margin: 10px 0 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .bank-rates-empty[hidden] { display: none; }
     .bank-rates-source { color: var(--accent-strong); font-weight: 650; }
     .bank-rates-source:hover { text-decoration: underline; }
 
@@ -713,8 +714,7 @@
       .rate-card { align-items: flex-start; flex-direction: column; gap: 10px; padding: 13px; }
       .rate-value { text-align: left; }
       .commercial-rates-section { margin-top: 38px; }
-      .commercial-rates-controls { width: 100%; align-items: stretch; flex-direction: column; }
-      .bank-select-label select { width: 100%; }
+      .bank-filter-label { flex-basis: calc(50% - 6px); }
       .bank-rates-table th, .bank-rates-table td { padding: 12px 10px; }
       .bank-rates-table th, .bank-rates-table td { font-size: 12px; }
       .history-controls { align-items: stretch; flex-direction: column; }
@@ -891,29 +891,51 @@
             <div class="section-kicker" data-i18n="bankRatesKicker">КУРСЫ БАНКОВ</div>
             <h2 id="bank-rates-title" data-i18n="bankRatesTitle">Курсы коммерческих банков</h2>
           </div>
-          <div class="commercial-rates-controls">
-            <label class="bank-select-label" for="bank-select">
-              <span data-i18n="bankSelectLabel">Выберите банк</span>
-              <span class="bank-select-wrap">
-                <select id="bank-select" disabled aria-describedby="bank-rates-status">
-                  <option value="" data-i18n="bankSelectLoading">Загрузка списка банков…</option>
-                </select>
-              </span>
-            </label>
-          </div>
+        </div>
+        <div class="bank-filter-controls" aria-label="Фильтры курсов банков" data-i18n-aria="bankFiltersLabel">
+          <label class="bank-filter-label">
+            <span data-i18n="bankFilterSearch">Банк</span>
+            <input id="bank-filter-search" type="search" autocomplete="off">
+          </label>
+          <label class="bank-filter-label" for="bank-filter-currency">
+            <span data-i18n="bankFilterCurrency">Валюта</span>
+            <select id="bank-filter-currency">
+              <option value="all" data-i18n="bankFilterAllCurrencies">Все валюты</option>
+              <option value="USD">USD</option><option value="RUB">RUB</option><option value="EUR">EUR</option>
+              <option value="GBP">GBP</option><option value="KZT">KZT</option>
+            </select>
+          </label>
+          <label class="bank-filter-label" for="bank-filter-type">
+            <span data-i18n="bankFilterRate">Фильтровать по цене</span>
+            <select id="bank-filter-type">
+              <option value="buy" data-i18n="bankBuy">Покупка</option>
+              <option value="sell" data-i18n="bankSell">Продажа</option>
+            </select>
+          </label>
+          <label class="bank-filter-label">
+            <span data-i18n="bankFilterMinimum">Цена от</span>
+            <input id="bank-filter-min" type="number" min="0" step="any" inputmode="decimal">
+          </label>
+          <label class="bank-filter-label">
+            <span data-i18n="bankFilterMaximum">Цена до</span>
+            <input id="bank-filter-max" type="number" min="0" step="any" inputmode="decimal">
+          </label>
         </div>
         <div class="bank-rates-table-wrap">
           <table class="bank-rates-table">
             <thead>
               <tr>
-                <th scope="col" data-i18n="bankCurrency">Валюта</th>
-                <th scope="col" data-i18n="bankBuy">Покупка</th>
-                <th scope="col" data-i18n="bankSell">Продажа</th>
+                <th scope="col" aria-sort="ascending"><button class="bank-sort-button" type="button" data-bank-sort="bank"><span data-i18n="bankName">Банк</span><span class="bank-sort-indicator" aria-hidden="true">↑</span></button></th>
+                <th scope="col" aria-sort="none"><button class="bank-sort-button" type="button" data-bank-sort="currency"><span data-i18n="bankCurrency">Валюта</span><span class="bank-sort-indicator" aria-hidden="true"></span></button></th>
+                <th scope="col" aria-sort="none"><button class="bank-sort-button" type="button" data-bank-sort="buy"><span data-i18n="bankBuy">Покупка</span><span class="bank-sort-indicator" aria-hidden="true"></span></button></th>
+                <th scope="col" aria-sort="none"><button class="bank-sort-button" type="button" data-bank-sort="sell"><span data-i18n="bankSell">Продажа</span><span class="bank-sort-indicator" aria-hidden="true"></span></button></th>
               </tr>
             </thead>
-            <tbody id="bank-rates-body"></tbody>
+            <tbody id="bank-rates-body" aria-live="polite"></tbody>
           </table>
         </div>
+        <p class="bank-rates-count" id="bank-rates-count" aria-live="polite"></p>
+        <p class="bank-rates-empty" id="bank-rates-empty" hidden data-i18n="bankRatesNoResults">По заданным фильтрам курсы не найдены.</p>
         <p class="bank-rates-status" id="bank-rates-status" role="status" aria-live="polite"></p>
         <p class="bank-rates-disclaimer">
           <span data-i18n="bankRatesDisclaimer">Курсы покупки и продажи предоставляет Bank.uz; перед обменом уточняйте курс в банке.</span>
@@ -1034,11 +1056,14 @@
         navRates: "Текущие курсы валют", eyebrow: "По курсу Центрального банка Узбекистана", pageTitle: "Конвертер валют",
         pageIntro: "Мировые валюты. Понятные цифры. Переводите в сумы и обратно за пару секунд.",
         calculator: "Калькулятор валют", autoCalc: "Автоматический расчет", amount: "Сумма", from: "Из", to: "В",
-        result: "Результат", currencies: "МИРОВЫЕ ВАЛЮТЫ", ratesTitle: "Текущие курсы валют",
+        result: "Результат", currencies: "КУРСЫ ЦБ", ratesTitle: "Текущие курсы валют",
         bankRatesKicker: "КУРСЫ БАНКОВ", bankRatesTitle: "Курсы коммерческих банков",
-        worldCurrenciesTab: "Мировые валюты", bankRatesTab: "Курсы коммерческих банков", ratesTabsLabel: "Разделы курсов валют",
-        bankSelectLabel: "Выберите банк", bankSelectLoading: "Загрузка списка банков…",
-        bankSelectPlaceholder: "Выберите банк", bankCurrency: "Валюта", bankBuy: "Покупка", bankSell: "Продажа",
+        worldCurrenciesTab: "Курсы ЦБ", bankRatesTab: "Курсы коммерческих банков", ratesTabsLabel: "Разделы курсов валют",
+        bankName: "Банк", bankCurrency: "Валюта", bankBuy: "Покупка", bankSell: "Продажа",
+        bankFiltersLabel: "Фильтры курсов банков", bankFilterSearch: "Поиск банка",
+        bankFilterCurrency: "Валюта", bankFilterAllCurrencies: "Все валюты", bankFilterRate: "Фильтровать по цене",
+        bankFilterMinimum: "Цена от", bankFilterMaximum: "Цена до", bankRatesCount: "Найдено предложений: {count}",
+        bankRatesNoResults: "По заданным фильтрам курсы не найдены.",
         bankRatesLoading: "Загружаем курсы банков…", bankRatesError: "Не удалось загрузить или обновить курсы банков. Данные могут быть устаревшими.",
         bankRatesSource: "Источник: Bank.uz", bankRatesUpdated: "Получено",
         bankRatesDisclaimer: "Курсы покупки и продажи предоставляет Bank.uz; перед обменом уточняйте курс в банке.",
@@ -1072,11 +1097,14 @@
         navRates: "Joriy valyuta kurslari", eyebrow: "O'zbekiston Markaziy banki kursi bo'yicha", pageTitle: "Valyuta konvertori",
         pageIntro: "Jahon valyutalari. Aniq hisob-kitob. So'mga va aksincha bir necha soniyada o'tkazing.",
         calculator: "Valyuta kalkulyatori", autoCalc: "Avtomatik hisob-kitob", amount: "Miqdor", from: "Dan", to: "Ga",
-        result: "Natija", currencies: "JAHON VALYUTALARI", ratesTitle: "Joriy valyuta kurslari",
+        result: "Natija", currencies: "MB KURSLARI", ratesTitle: "Joriy valyuta kurslari",
         bankRatesKicker: "BANK KURSLARI", bankRatesTitle: "Tijorat banklari valyuta kurslari",
-        worldCurrenciesTab: "Jahon valyutalari", bankRatesTab: "Tijorat banklari kurslari", ratesTabsLabel: "Valyuta kurslari bo'limlari",
-        bankSelectLabel: "Bankni tanlang", bankSelectLoading: "Banklar ro'yxati yuklanmoqda…",
-        bankSelectPlaceholder: "Bankni tanlang", bankCurrency: "Valyuta", bankBuy: "Sotib olish", bankSell: "Sotish",
+        worldCurrenciesTab: "MB kurslari", bankRatesTab: "Tijorat banklari kurslari", ratesTabsLabel: "Valyuta kurslari bo'limlari",
+        bankName: "Bank", bankCurrency: "Valyuta", bankBuy: "Sotib olish", bankSell: "Sotish",
+        bankFiltersLabel: "Bank kurslari filtrlari", bankFilterSearch: "Bankni qidirish",
+        bankFilterCurrency: "Valyuta", bankFilterAllCurrencies: "Barcha valyutalar", bankFilterRate: "Narx bo'yicha filtrlash",
+        bankFilterMinimum: "Narxdan", bankFilterMaximum: "Narxgacha", bankRatesCount: "Topilgan takliflar: {count}",
+        bankRatesNoResults: "Tanlangan filtrlar bo'yicha kurslar topilmadi.",
         bankRatesLoading: "Bank kurslari yuklanmoqda…", bankRatesError: "Bank kurslarini yuklab yoki yangilab bo'lmadi. Ma'lumotlar eskirgan bo'lishi mumkin.",
         bankRatesSource: "Manba: Bank.uz", bankRatesUpdated: "Yuklandi",
         bankRatesDisclaimer: "Sotib olish va sotish kurslari Bank.uz tomonidan taqdim etilgan; almashtirishdan oldin bankdan aniqlashtiring.",
@@ -1110,11 +1138,14 @@
         navRates: "Current exchange rates", eyebrow: "Central Bank of Uzbekistan exchange rates", pageTitle: "Currency converter",
         pageIntro: "World currencies. Clear numbers. Convert to and from Uzbek som in seconds.",
         calculator: "Currency calculator", autoCalc: "Automatic calculation", amount: "Amount", from: "From", to: "To",
-        result: "Result", currencies: "WORLD CURRENCIES", ratesTitle: "Current exchange rates",
+        result: "Result", currencies: "CENTRAL BANK RATES", ratesTitle: "Current exchange rates",
         bankRatesKicker: "BANK RATES", bankRatesTitle: "Commercial bank exchange rates",
-        worldCurrenciesTab: "World currencies", bankRatesTab: "Commercial bank rates", ratesTabsLabel: "Exchange rate sections",
-        bankSelectLabel: "Select a bank", bankSelectLoading: "Loading bank list…",
-        bankSelectPlaceholder: "Select a bank", bankCurrency: "Currency", bankBuy: "Buy", bankSell: "Sell",
+        worldCurrenciesTab: "Central Bank rates", bankRatesTab: "Commercial bank rates", ratesTabsLabel: "Exchange rate sections",
+        bankName: "Bank", bankCurrency: "Currency", bankBuy: "Buy", bankSell: "Sell",
+        bankFiltersLabel: "Bank rate filters", bankFilterSearch: "Search banks",
+        bankFilterCurrency: "Currency", bankFilterAllCurrencies: "All currencies", bankFilterRate: "Filter by price",
+        bankFilterMinimum: "Price from", bankFilterMaximum: "Price to", bankRatesCount: "Offers found: {count}",
+        bankRatesNoResults: "No rates match the selected filters.",
         bankRatesLoading: "Loading bank rates…", bankRatesError: "Could not load or refresh bank rates. The displayed data may be stale.",
         bankRatesSource: "Source: Bank.uz", bankRatesUpdated: "Fetched",
         bankRatesDisclaimer: "Buy and sell rates are provided by Bank.uz; confirm the rate with the bank before exchanging.",
@@ -1183,9 +1214,15 @@
     const ratesMoreButton = document.querySelector("#rates-more");
     const ratesNote = document.querySelector("#rates-note");
     const rateViewToggle = document.querySelector("#rate-view-toggle");
-    const bankSelect = document.querySelector("#bank-select");
     const bankRatesBody = document.querySelector("#bank-rates-body");
     const bankRatesStatus = document.querySelector("#bank-rates-status");
+    const bankRatesCount = document.querySelector("#bank-rates-count");
+    const bankRatesEmpty = document.querySelector("#bank-rates-empty");
+    const bankFilterSearch = document.querySelector("#bank-filter-search");
+    const bankFilterCurrency = document.querySelector("#bank-filter-currency");
+    const bankFilterType = document.querySelector("#bank-filter-type");
+    const bankFilterMinimum = document.querySelector("#bank-filter-min");
+    const bankFilterMaximum = document.querySelector("#bank-filter-max");
     const ratesTabButtons = [...document.querySelectorAll(".rates-tab")];
     const ratesTabPanels = ratesTabButtons.map((button) => document.getElementById(button.getAttribute("aria-controls")));
     const historyDialog = document.querySelector("#history-dialog");
@@ -1216,6 +1253,8 @@
     let bankRatesFetchedAt = null;
     let bankRatesLoadFailed = false;
     let bankRatesRequestInProgress = false;
+    let bankSortKey = "bank";
+    let bankSortDirection = "ascending";
     let showReverseRates = false;
     let showAllRates = false;
     let rateListAnimationTimer = null;
@@ -1269,25 +1308,72 @@
 
     function renderCommercialBankRates() {
       bankRatesBody.replaceChildren();
-      const selectedBank = commercialBankRates.get(bankSelect.value);
-      if (!selectedBank) return;
+      const search = searchKey(bankFilterSearch.value);
+      const currency = bankFilterCurrency.value;
+      const rateType = bankFilterType.value;
+      const minimum = bankFilterMinimum.value === "" ? null : Number(bankFilterMinimum.value);
+      const maximum = bankFilterMaximum.value === "" ? null : Number(bankFilterMaximum.value);
+      const rows = [];
 
-      commercialRateCodes.forEach((code) => {
+      commercialBankRates.forEach((bank) => {
+        if (search && !searchKey(bank.name).includes(search)) return;
+        commercialRateCodes.forEach((code) => {
+          if (currency !== "all" && currency !== code) return;
+          const rates = bank.rates[code];
+          if (!rates) return;
+          const filteredRate = rates[rateType];
+          if (minimum !== null && (filteredRate === null || filteredRate < minimum)) return;
+          if (maximum !== null && (filteredRate === null || filteredRate > maximum)) return;
+          rows.push({ bank: bank.name, code, buy: rates.buy, sell: rates.sell, sortRate: filteredRate });
+        });
+      });
+
+      const direction = bankSortDirection === "ascending" ? 1 : -1;
+      rows.sort((left, right) => {
+        let comparison;
+        if (bankSortKey === "bank") {
+          comparison = left.bank.localeCompare(right.bank, localeCodes[activeLanguage]);
+        } else if (bankSortKey === "currency") {
+          comparison = left.code.localeCompare(right.code);
+        } else {
+          const leftRate = left[bankSortKey];
+          const rightRate = right[bankSortKey];
+          if (leftRate === null || rightRate === null) {
+            if (leftRate !== rightRate) return leftRate === null ? 1 : -1;
+            comparison = 0;
+          } else comparison = leftRate - rightRate;
+          comparison *= direction;
+        }
+        if (bankSortKey === "bank" || bankSortKey === "currency") comparison *= direction;
+        return comparison
+          || left.bank.localeCompare(right.bank, localeCodes[activeLanguage])
+          || left.code.localeCompare(right.code);
+      });
+
+      document.querySelectorAll("[data-bank-sort]").forEach((button) => {
+        const active = button.dataset.bankSort === bankSortKey;
+        const header = button.closest("th");
+        const indicator = button.querySelector(".bank-sort-indicator");
+        header.setAttribute("aria-sort", active ? bankSortDirection : "none");
+        indicator.textContent = active ? (bankSortDirection === "ascending" ? "↑" : "↓") : "";
+      });
+
+      rows.forEach(({ bank, code, buy, sell }) => {
         const row = document.createElement("tr");
+        const bankCell = document.createElement("td");
         const currencyCell = document.createElement("td");
         const buyCell = document.createElement("td");
         const sellCell = document.createElement("td");
+        bankCell.textContent = bank;
         currencyCell.textContent = code;
-        const rates = selectedBank.rates[code];
-        buyCell.textContent = rates?.buy === null || rates?.buy === undefined
-          ? "—"
-          : formatNumber(rates.buy, { maximumFractionDigits: 2 });
-        sellCell.textContent = rates?.sell === null || rates?.sell === undefined
-          ? "—"
-          : formatNumber(rates.sell, { maximumFractionDigits: 2 });
-        row.append(currencyCell, buyCell, sellCell);
+        buyCell.textContent = buy === null ? "—" : formatNumber(buy, { maximumFractionDigits: 2 });
+        sellCell.textContent = sell === null ? "—" : formatNumber(sell, { maximumFractionDigits: 2 });
+        row.append(bankCell, currencyCell, buyCell, sellCell);
         bankRatesBody.append(row);
       });
+
+      bankRatesCount.textContent = translations[activeLanguage].bankRatesCount.replace("{count}", String(rows.length));
+      bankRatesEmpty.hidden = rows.length > 0 || !commercialBankRates.size;
     }
 
     function parseCommercialRate(value) {
@@ -1309,8 +1395,6 @@
       const timeoutId = window.setTimeout(() => controller.abort(), 12000);
       try {
         if (!commercialBankRates.size) {
-          bankSelect.disabled = true;
-          bankSelect.replaceChildren(new Option(translations[activeLanguage].bankSelectLoading, ""));
           updateCommercialBankStatus();
         }
         const response = await fetch(bankRatesApiUrl, {
@@ -1353,13 +1437,7 @@
         });
         if (!parsedRates.size) throw new Error("Bank.uz response contains no commercial bank rates");
 
-        const previousBank = bankSelect.value;
         commercialBankRates = parsedRates;
-        bankSelect.replaceChildren(...[...parsedRates.entries()]
-          .sort((left, right) => left[1].name.localeCompare(right[1].name, localeCodes[activeLanguage]))
-          .map(([slug, bank]) => new Option(bank.name, slug)));
-        bankSelect.disabled = false;
-        bankSelect.value = parsedRates.has(previousBank) ? previousBank : bankSelect.options[0].value;
         bankRatesFetchedAt = new Date();
         bankRatesLoadFailed = false;
         renderCommercialBankRates();
@@ -1367,11 +1445,7 @@
       } catch (error) {
         console.error("Could not load commercial bank exchange rates from Bank.uz:", error);
         bankRatesLoadFailed = true;
-        if (!commercialBankRates.size) {
-          bankSelect.replaceChildren(new Option(translations[activeLanguage].bankRatesError, ""));
-          bankSelect.disabled = true;
-          renderCommercialBankRates();
-        }
+        renderCommercialBankRates();
         updateCommercialBankStatus();
       } finally {
         window.clearTimeout(timeoutId);
@@ -2088,9 +2162,6 @@
       buildOptions();
       updateRateControls();
       renderRateCards();
-      if (bankRatesLoadFailed && !commercialBankRates.size) {
-        bankSelect.replaceChildren(new Option(translations[language].bankRatesError, ""));
-      }
       renderCommercialBankRates();
       updateCommercialBankStatus();
       updateRateStatus();
@@ -2209,7 +2280,20 @@
     });
 
     languageSelect.addEventListener("change", () => setLanguage(languageSelect.value));
-    bankSelect.addEventListener("change", renderCommercialBankRates);
+    [bankFilterSearch, bankFilterCurrency, bankFilterType, bankFilterMinimum, bankFilterMaximum].forEach((control) => {
+      control.addEventListener(control.tagName === "SELECT" ? "change" : "input", renderCommercialBankRates);
+    });
+    document.querySelectorAll("[data-bank-sort]").forEach((button) => {
+      button.addEventListener("click", () => {
+        if (bankSortKey === button.dataset.bankSort) {
+          bankSortDirection = bankSortDirection === "ascending" ? "descending" : "ascending";
+        } else {
+          bankSortKey = button.dataset.bankSort;
+          bankSortDirection = "ascending";
+        }
+        renderCommercialBankRates();
+      });
+    });
     ratesTabButtons.forEach((button, index) => {
       button.addEventListener("click", () => activateRatesTab(index));
       button.addEventListener("keydown", (event) => {
