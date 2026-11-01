@@ -1560,6 +1560,70 @@
       });
     }
 
+    function parseCbuDate(value) {
+      const match = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(value);
+      if (!match) throw new Error(`CBU returned an invalid date: "${value}"`);
+      return `${match[3]}-${match[2]}-${match[1]}`;
+    }
+
+    function historySampleDates(latestDate) {
+      const latest = new Date(`${latestDate}T00:00:00Z`);
+      const first = new Date(latest);
+      first.setUTCFullYear(first.getUTCFullYear() - 7);
+      const recentStart = new Date(latest);
+      recentStart.setUTCFullYear(recentStart.getUTCFullYear() - 1);
+      const dates = new Set([first.toISOString().slice(0, 10), recentStart.toISOString().slice(0, 10), latestDate]);
+
+      const monthly = new Date(Date.UTC(first.getUTCFullYear(), first.getUTCMonth() + 1, 15));
+      while (monthly < recentStart) {
+        dates.add(monthly.toISOString().slice(0, 10));
+        monthly.setUTCMonth(monthly.getUTCMonth() + 1);
+      }
+
+      const weekly = new Date(recentStart);
+      while (weekly <= latest) {
+        dates.add(weekly.toISOString().slice(0, 10));
+        weekly.setUTCDate(weekly.getUTCDate() + 7);
+      }
+
+      return [...dates].sort();
+    }
+
+    async function fetchCbuRateAtDate(code, date, signal) {
+      const url = `https://cbu.uz/ru/arkhiv-kursov-valyut/json/${encodeURIComponent(code)}/${date}/`;
+      const response = await fetch(url, { signal });
+      if (!response.ok) throw new Error(`CBU history returned HTTP ${response.status} for ${date}`);
+      const data = await response.json();
+      if (!Array.isArray(data) || !data.length) throw new Error(`CBU returned no ${code} rate for ${date}`);
+
+      const item = data[0];
+      const nominal = Number(item.Nominal);
+      const rate = Number(item.Rate);
+      if (item.Ccy !== code || !Number.isFinite(rate) || rate <= 0 || !Number.isFinite(nominal) || nominal <= 0) {
+        throw new Error(`CBU returned an invalid ${code} rate for ${date}`);
+      }
+      return { date: parseCbuDate(item.Date), value: rate / nominal };
+    }
+
+    async function loadSampledCbuHistory(code, signal) {
+      const latest = await fetchCbuRateAtDate(code, new Date().toISOString().slice(0, 10), signal);
+      const dates = historySampleDates(latest.date).filter((date) => date !== latest.date);
+      const series = [latest];
+      let nextIndex = 0;
+      const workerCount = Math.min(24, dates.length);
+      const workers = Array.from({ length: workerCount }, async () => {
+        while (nextIndex < dates.length) {
+          const date = dates[nextIndex];
+          nextIndex += 1;
+          series.push(await fetchCbuRateAtDate(code, date, signal));
+        }
+      });
+      await Promise.all(workers);
+
+      const uniquePoints = new Map(series.map((point) => [point.date, point]));
+      return [...uniquePoints.values()].sort((left, right) => left.date.localeCompare(right.date));
+    }
+
     function updateHistoryScrollbar(bounds, viewStart, viewEnd) {
       const totalSpan = bounds.end - bounds.start;
       const viewSpan = viewEnd - viewStart;
@@ -1867,20 +1931,22 @@
 
       const controller = new AbortController();
       historyRequestController = controller;
-      const timeoutId = window.setTimeout(() => controller.abort(), 15000);
+      const timeoutId = window.setTimeout(() => controller.abort(), 45000);
       try {
-        const historyEndpoint = window.location.protocol === "file:"
-          ? "https://cbu.uz/common/json/amcharts.php"
-          : "/api/history";
-        const url = `${historyEndpoint}?rate=${encodeURIComponent(currency.code)}`;
-        const response = await fetch(url, { cache: "no-store", signal: controller.signal });
-        if (!response.ok) throw new Error(`CBU history returned HTTP ${response.status}`);
-        const data = await response.json();
-        if (!Array.isArray(data)) throw new Error("CBU history response is not a data list");
-        const series = data.map((item) => ({
-          date: typeof item.date === "string" ? item.date : "",
-          value: Number(item.value)
-        }));
+        let series;
+        if (window.location.protocol === "file:") {
+          const url = `https://cbu.uz/common/json/amcharts.php?rate=${encodeURIComponent(currency.code)}`;
+          const response = await fetch(url, { cache: "no-store", signal: controller.signal });
+          if (!response.ok) throw new Error(`CBU history returned HTTP ${response.status}`);
+          const data = await response.json();
+          if (!Array.isArray(data)) throw new Error("CBU history response is not a data list");
+          series = data.map((item) => ({
+            date: typeof item.date === "string" ? item.date : "",
+            value: Number(item.value)
+          }));
+        } else {
+          series = await loadSampledCbuHistory(currency.code, controller.signal);
+        }
         const hasInvalidPoint = series.some((point) => {
           if (!/^\d{4}-\d{2}-\d{2}$/.test(point.date) || !Number.isFinite(point.value) || point.value <= 0) return true;
           const timestamp = Date.parse(`${point.date}T00:00:00Z`);
@@ -1896,6 +1962,7 @@
         historyFromInput.focus();
       } catch (error) {
         if (controller.signal.aborted && !historyDialog.open) return;
+        if (!controller.signal.aborted) controller.abort();
         console.error(`Could not load CBU history for ${currency.code}:`, error);
         if (historyDialog.open && requestId === historyRequestId) {
           const svg = historyChart.querySelector("svg");
