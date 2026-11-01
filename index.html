@@ -1568,13 +1568,25 @@
 
     function historySampleDates(latestDate) {
       const latest = new Date(`${latestDate}T00:00:00Z`);
-      const first = new Date(latest);
-      first.setUTCFullYear(first.getUTCFullYear() - 7);
+      const first = new Date("1994-12-29T00:00:00Z");
       const recentStart = new Date(latest);
       recentStart.setUTCFullYear(recentStart.getUTCFullYear() - 1);
-      const dates = new Set([first.toISOString().slice(0, 10), recentStart.toISOString().slice(0, 10), latestDate]);
+      const monthlyStart = new Date(latest);
+      monthlyStart.setUTCFullYear(monthlyStart.getUTCFullYear() - 7);
+      const dates = new Set([
+        first.toISOString().slice(0, 10),
+        monthlyStart.toISOString().slice(0, 10),
+        recentStart.toISOString().slice(0, 10),
+        latestDate
+      ]);
 
-      const monthly = new Date(Date.UTC(first.getUTCFullYear(), first.getUTCMonth() + 1, 15));
+      const quarterly = new Date(Date.UTC(first.getUTCFullYear(), first.getUTCMonth() + 1, 15));
+      while (quarterly < monthlyStart) {
+        if (quarterly.getUTCMonth() % 3 === 0) dates.add(quarterly.toISOString().slice(0, 10));
+        quarterly.setUTCMonth(quarterly.getUTCMonth() + 1);
+      }
+
+      const monthly = new Date(Date.UTC(monthlyStart.getUTCFullYear(), monthlyStart.getUTCMonth() + 1, 15));
       while (monthly < recentStart) {
         dates.add(monthly.toISOString().slice(0, 10));
         monthly.setUTCMonth(monthly.getUTCMonth() + 1);
@@ -1594,7 +1606,8 @@
       const response = await fetch(url, { signal });
       if (!response.ok) throw new Error(`CBU history returned HTTP ${response.status} for ${date}`);
       const data = await response.json();
-      if (!Array.isArray(data) || !data.length) throw new Error(`CBU returned no ${code} rate for ${date}`);
+      if (!Array.isArray(data)) throw new Error(`CBU history response is not a data list for ${date}`);
+      if (!data.length) return null;
 
       const item = data[0];
       const nominal = Number(item.Nominal);
@@ -1615,7 +1628,8 @@
         while (nextIndex < dates.length) {
           const date = dates[nextIndex];
           nextIndex += 1;
-          series.push(await fetchCbuRateAtDate(code, date, signal));
+          const point = await fetchCbuRateAtDate(code, date, signal);
+          if (point) series.push(point);
         }
       });
       await Promise.all(workers);
