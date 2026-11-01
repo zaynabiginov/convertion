@@ -1,0 +1,1980 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101a2d">
+  <meta name="description" content="Удобный конвертер валют с курсами к узбекскому суму.">
+  <title>Конвертер валют — Convertion.uz</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --page: #101a2d;
+      --surface: #1e2b40;
+      --surface-soft: #29374d;
+      --text: #e4eaf3;
+      --muted: #a6b1c2;
+      --line: #3b4a60;
+      --accent: #08a477;
+      --accent-strong: #10b981;
+      --accent-soft: #173d3a;
+      --shadow: 0 18px 55px rgba(0, 0, 0, .2);
+    }
+
+    [data-theme="light"] {
+      color-scheme: light;
+      --page: #f5f7fb;
+      --surface: #ffffff;
+      --surface-soft: #eef2f8;
+      --text: #202b3c;
+      --muted: #68768b;
+      --line: #dce3ed;
+      --accent: #008f68;
+      --accent-strong: #087c5d;
+      --accent-soft: #e0f3ec;
+      --shadow: 0 18px 55px rgba(31, 47, 72, .08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+      transition: background .2s ease, color .2s ease;
+    }
+
+    button, input, select { font: inherit; }
+    a { color: inherit; text-decoration: none; }
+
+    .page-shell { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+
+    .site-header {
+      height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand { display: inline-flex; align-items: center; gap: 11px; font-size: 17px; font-weight: 750; letter-spacing: -.04em; }
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 5px 16px rgba(8, 164, 119, .25);
+    }
+
+    .header-actions { display: flex; align-items: center; gap: 20px; }
+    .header-preferences {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, .06);
+    }
+    .language-control {
+      position: relative;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 26px 0 10px;
+      border-radius: 10px;
+      color: var(--muted);
+      transition: background .16s ease, color .16s ease;
+    }
+    .language-control:hover, .language-control:focus-within { background: var(--surface-soft); color: var(--text); }
+    .language-control svg { width: 16px; height: 16px; flex: 0 0 16px; color: var(--accent-strong); }
+    .language-select {
+      width: 105px;
+      height: 36px;
+      padding: 0;
+      border: 0;
+      outline: none;
+      appearance: none;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 650;
+    }
+    .language-select:focus-visible { outline: none; }
+    .language-control:focus-within { outline: 2px solid var(--line); outline-offset: 1px; }
+    .language-select option { padding: 8px 12px; background: var(--surface); color: var(--text); }
+    .language-control::after {
+      position: absolute;
+      top: 15px;
+      right: 11px;
+      width: 7px;
+      height: 7px;
+      border-right: 1.5px solid var(--muted);
+      border-bottom: 1.5px solid var(--muted);
+      content: "";
+      pointer-events: none;
+      transform: rotate(45deg);
+    }
+    .preferences-divider { width: 1px; height: 23px; background: var(--line); }
+    .nav-link { color: var(--muted); font-size: 14px; font-weight: 550; }
+    .nav-link:hover { color: var(--accent); }
+    .theme-switch {
+      min-width: 92px;
+      height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 10px;
+      border-radius: 10px;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 650;
+      white-space: nowrap;
+      transition: background .16s ease, color .16s ease;
+    }
+    .theme-switch:hover { background: var(--surface-soft); color: var(--text); }
+    .theme-switch input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+    .theme-icon { width: 16px; height: 16px; flex: 0 0 16px; color: var(--accent-strong); }
+    .theme-icon-sun { display: none; }
+    [data-theme="light"] .theme-icon-moon { display: none; }
+    [data-theme="light"] .theme-icon-sun { display: block; }
+    .theme-switch .switch-track { width: 38px; height: 22px; flex-basis: 38px; }
+    .theme-switch .switch-track span { width: 14px; height: 14px; }
+    .theme-switch input:checked + .switch-track { border-color: var(--accent); background: var(--accent); }
+    .theme-switch input:checked + .switch-track span { transform: translateX(14px); background: #fff; }
+    .theme-switch input:focus-visible + .switch-track { outline: 2px solid var(--accent-strong); outline-offset: 3px; }
+
+    main { padding: 66px 0 76px; }
+    .intro { max-width: 700px; margin: 0 auto 34px; text-align: center; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--accent-strong);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .eyebrow-dot { width: 7px; height: 7px; border-radius: 50%; background: #64ae82; }
+    h1 { margin: 17px 0 10px; font-size: clamp(36px, 5vw, 52px); line-height: 1.12; letter-spacing: -.055em; }
+    .intro p { margin: 0; color: var(--muted); font-size: 16px; }
+
+    .convertion-card {
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 30px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .card-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+    .card-heading h2 { margin: 0; font-size: 20px; letter-spacing: -.03em; }
+    .live-badge { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; }
+    .live-badge .live-dot { width: 7px; height: 7px; flex: 0 0 7px; border-radius: 50%; background: #65b384; }
+    .live-badge { white-space: nowrap; }
+
+    .conversion-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, .75fr); align-items: stretch; gap: 26px; }
+    .amount-field { display: block; margin-bottom: 18px; }
+    .field-label { display: block; margin-bottom: 9px; color: var(--muted); font-size: 13px; font-weight: 650; }
+    .amount-input, .currency-select {
+      width: 100%;
+      height: 56px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      outline: none;
+      background: var(--page);
+      color: var(--text);
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .amount-input { padding: 0 48px 0 16px; font-size: 19px; font-weight: 650; }
+    .amount-input:focus, .currency-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent); }
+
+    .number-control { position: relative; display: block; }
+    .number-control input[type="number"]::-webkit-inner-spin-button,
+    .number-control input[type="number"]::-webkit-outer-spin-button { margin: 0; appearance: none; }
+    .number-control input[type="number"] { appearance: textfield; }
+    .number-stepper {
+      position: absolute;
+      top: 50%;
+      right: 9px;
+      display: grid;
+      gap: 2px;
+      transform: translateY(-50%);
+    }
+    .number-stepper button {
+      width: 24px;
+      height: 17px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      border: 0;
+      border-radius: 5px;
+      background: transparent;
+      color: var(--accent-strong);
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+    .number-stepper button:hover { background: var(--accent-soft); color: var(--accent); }
+    .number-stepper button:active { background: var(--accent); color: #fff; }
+    .number-stepper button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+    .number-stepper svg { width: 12px; height: 12px; }
+
+    .currency-row { display: grid; grid-template-columns: 1fr 54px 1fr; align-items: end; gap: 14px; }
+    .select-control { position: relative; display: block; }
+    .currency-select { padding: 0 42px 0 13px; appearance: none; font-weight: 600; cursor: pointer; }
+    .select-arrow {
+      position: absolute;
+      top: 50%;
+      right: 14px;
+      width: 9px;
+      height: 9px;
+      border-right: 2px solid var(--accent-strong);
+      border-bottom: 2px solid var(--accent-strong);
+      border-radius: 1px;
+      pointer-events: none;
+      transform: translateY(-70%) rotate(45deg);
+      transition: transform .18s ease, border-color .18s ease;
+    }
+    .select-control:focus-within .select-arrow { border-color: var(--accent); transform: translateY(-25%) rotate(225deg); }
+
+    .swap-button {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      margin: 0 auto 6px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: var(--surface-soft);
+      color: var(--accent);
+      cursor: pointer;
+      font-size: 20px;
+      transition: transform .28s cubic-bezier(.2,.8,.2,1), background .2s, border-color .2s, box-shadow .2s;
+    }
+    .swap-button:hover { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 4px 14px rgba(8, 164, 119, .16); }
+    .swap-button:active, .swap-button.is-swapping { transform: rotate(180deg) scale(.92); }
+    .swap-button:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 3px; }
+
+    .result-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-end;
+      min-width: 0;
+      margin: 0;
+      padding: 12px 0 12px 24px;
+      border: 0;
+      border-left: 1px solid var(--line);
+      background: transparent;
+      text-align: right;
+    }
+    .result-label { color: var(--muted); font-size: 13px; font-weight: 600; }
+    .result-amount { margin-top: 3px; color: var(--accent-strong); font-size: clamp(27px, 4vw, 36px); font-weight: 750; line-height: 1.2; letter-spacing: -.045em; overflow-wrap: anywhere; }
+    .rate-line { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
+    .updated-line { margin: 8px 0 0; color: var(--muted); font-size: 12px; }
+
+    .rates-section { margin-top: 76px; }
+    .section-heading { display: flex; justify-content: space-between; align-items: center; gap: 18px; margin-bottom: 18px; }
+    .section-kicker { color: var(--accent); font-size: 11px; font-weight: 750; letter-spacing: .13em; }
+    .section-heading h2 { margin: 5px 0 0; font-size: 25px; letter-spacing: -.04em; white-space: nowrap; }
+    .section-note { color: var(--muted); font-size: 12px; white-space: nowrap; }
+    .rate-tools { display: flex; align-items: center; justify-content: flex-end; gap: 10px; min-width: 0; flex: 1 1 auto; }
+    .rate-search { position: relative; flex: 0 1 237px; min-width: 130px; }
+    .rate-search input {
+      width: 100%;
+      height: 40px;
+      padding: 0 14px 0 42px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      outline: none;
+      background: var(--surface);
+      color: var(--text);
+      font: inherit;
+      font-size: 14px;
+    }
+    .rate-search input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent); }
+    .rate-search input::placeholder { color: var(--muted); }
+    .search-icon { position: absolute; top: 50%; left: 14px; color: var(--muted); font-size: 17px; transform: translateY(-50%); pointer-events: none; }
+    .rate-amount-control { display: flex; align-items: center; gap: 6px; flex: 0 0 auto; }
+    .rate-amount-control span { color: var(--muted); font-size: 13px; }
+    .rate-amount-control input {
+      width: 78px;
+      height: 40px;
+      padding: 0 29px 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      outline: none;
+      background: var(--surface);
+      color: var(--text);
+      font: inherit;
+      font-size: 14px;
+    }
+    .rate-amount-control .number-stepper { right: 5px; }
+    .rate-amount-control .number-stepper button { width: 20px; height: 14px; }
+    .rate-amount-control .number-stepper svg { width: 10px; height: 10px; }
+    .rate-amount-control input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent); }
+    .rate-switch { display: inline-flex; align-items: center; gap: 9px; flex: 0 0 auto; color: var(--text); cursor: pointer; font-size: 13px; font-weight: 600; white-space: nowrap; }
+    .rate-switch input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+    .switch-track {
+      position: relative;
+      width: 40px;
+      height: 23px;
+      flex: 0 0 40px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--surface-soft);
+      transition: background .2s, border-color .2s;
+    }
+    .switch-track span {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: var(--muted);
+      transition: transform .2s cubic-bezier(.2,.8,.2,1), background .2s;
+    }
+    .rate-switch input:checked + .switch-track { border-color: var(--accent); background: var(--accent); }
+    .rate-switch input:checked + .switch-track span { transform: translateX(17px); background: #fff; }
+    .rate-switch input:focus-visible + .switch-track { outline: 2px solid var(--accent-strong); outline-offset: 3px; }
+    .rate-count { margin: 0 0 12px; color: var(--muted); font-size: 12px; }
+    .rate-empty { grid-column: 1 / -1; margin: 0; padding: 30px 16px; border: 1px dashed var(--line); border-radius: 14px; color: var(--muted); text-align: center; }
+    .rates-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; }
+    .rates-grid.is-animated { overflow: hidden; transition: max-height .4s cubic-bezier(.2,.8,.2,1); }
+    .rate-card {
+      min-width: 0;
+      min-height: 88px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--surface);
+      cursor: pointer;
+      transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+    }
+    .rate-card:hover { border-color: var(--accent); box-shadow: 0 8px 24px rgba(0, 0, 0, .1); transform: translateY(-2px); }
+    .rate-card:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 3px; }
+    .rate-currency { display: flex; align-items: center; gap: 12px; min-width: 0; width: 100%; }
+    .currency-symbol {
+      position: relative;
+      width: 42px;
+      height: 42px;
+      flex: 0 0 42px;
+      display: grid;
+      place-items: center;
+      isolation: isolate;
+    }
+    .currency-flag {
+      position: absolute;
+      z-index: 0;
+      right: 0;
+      bottom: 1px;
+      width: 24px;
+      height: 18px;
+      border: 1px solid color-mix(in srgb, var(--line) 75%, transparent);
+      border-radius: 4px;
+      object-fit: cover;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .22);
+    }
+    .currency-glyph {
+      position: absolute;
+      z-index: 1;
+      top: 0;
+      left: 0;
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--line));
+      border-radius: 11px;
+      background: color-mix(in srgb, var(--surface) 88%, transparent);
+      color: var(--accent-strong);
+      font-size: 17px;
+      font-weight: 750;
+      line-height: 1;
+      text-shadow: 0 1px 3px var(--surface);
+      white-space: nowrap;
+    }
+    .currency-flag-generic { position: absolute; right: 0; bottom: 0; font-size: 18px; line-height: 1; }
+    .rate-name { min-width: 0; overflow: hidden; }
+    .rate-name strong { display: block; font-size: 14px; }
+    .rate-name span { display: block; overflow: hidden; color: var(--muted); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+    .rate-value { flex: 0 0 auto; text-align: right; }
+    .rate-value strong { display: block; font-size: 14px; }
+    .rate-value span { color: var(--muted); font-size: 11px; }
+    .rates-more-wrap { display: flex; justify-content: center; padding-top: 20px; }
+    .rates-more-wrap[hidden] { display: none; }
+    .rates-more {
+      min-height: 42px;
+      padding: 0 20px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: var(--surface);
+      color: var(--accent-strong);
+      cursor: pointer;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      transition: background .18s ease, border-color .18s ease, transform .18s ease;
+    }
+    .rates-more:hover { border-color: var(--accent); background: var(--accent-soft); transform: translateY(-1px); }
+    .rates-more:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 3px; }
+
+    .history-dialog {
+      width: min(1180px, calc(100vw - 48px));
+      max-width: calc(100vw - 24px);
+      min-width: min(340px, calc(100vw - 24px));
+      height: min(760px, calc(90vh - 24px));
+      max-height: calc(100vh - 24px);
+      min-height: 390px;
+      padding: 0;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: var(--shadow);
+      resize: both;
+      opacity: 0;
+      transform: translateY(12px) scale(.985);
+      transition: opacity .22s ease, transform .22s ease, overlay .22s allow-discrete, display .22s allow-discrete;
+    }
+    .history-dialog[open] { opacity: 1; transform: translateY(0) scale(1); }
+    @starting-style { .history-dialog[open] { opacity: 0; transform: translateY(12px) scale(.985); } }
+    .history-dialog.is-closing { opacity: 0; transform: translateY(8px) scale(.99); }
+    .history-dialog::backdrop { background: rgba(8, 15, 27, 0); backdrop-filter: blur(0); transition: background .22s ease, backdrop-filter .22s ease; }
+    .history-dialog[open]::backdrop { background: rgba(8, 15, 27, .7); backdrop-filter: blur(4px); }
+    .history-dialog-inner { display: flex; height: 100%; min-height: 0; flex-direction: column; padding: clamp(20px, 3vw, 34px); }
+    .history-heading, .history-controls, .history-hint, .history-status, .history-stats { flex-shrink: 0; }
+    .history-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
+    .history-heading h2 { margin: 0; font-size: clamp(21px, 4vw, 28px); letter-spacing: -.04em; }
+    .history-heading p { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
+    .history-close {
+      width: 38px;
+      height: 38px;
+      flex: 0 0 38px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: var(--surface-soft);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 21px;
+      line-height: 1;
+    }
+    .history-close:hover { border-color: #ef4444; background: rgba(239, 68, 68, .14); color: #ef4444; }
+    .history-close:focus-visible, .history-controls input:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 2px; }
+    .history-controls { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; margin: 25px 0 14px; }
+    .history-controls label { display: grid; gap: 6px; color: var(--muted); font-size: 12px; font-weight: 650; }
+    .history-controls input {
+      min-width: 170px;
+      height: 42px;
+      padding: 0 11px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--page);
+      color: var(--text);
+      font: inherit;
+      color-scheme: inherit;
+    }
+    .history-tools { display: flex; flex: 1 1 100%; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+    .history-presets, .history-zoom { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+    .history-tool-button {
+      min-height: 34px;
+      padding: 6px 11px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--page);
+      color: var(--text);
+      cursor: pointer;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 650;
+      transition: border-color .16s ease, background .16s ease, color .16s ease, transform .16s ease;
+    }
+    .history-tool-button:hover { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-strong); }
+    .history-tool-button:active { transform: scale(.96); }
+    .history-tool-button:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 2px; }
+    .history-presets .is-active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-strong); }
+    .history-zoom { margin-left: auto; }
+    .history-stats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 9px; margin: 15px 0; }
+    .history-stat { min-width: 0; padding: 11px 13px; border: 1px solid var(--line); border-radius: 11px; background: var(--page); }
+    .history-stat span { display: block; overflow: hidden; color: var(--muted); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+    .history-stat strong { display: block; margin-top: 4px; overflow: hidden; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
+    .history-stat[data-trend="up"] strong { color: #32c48d; }
+    .history-stat[data-trend="down"] strong { color: #ef6c6c; }
+    .history-hint { margin: 2px 0 10px; color: var(--muted); font-size: 11px; line-height: 1.5; }
+    .history-status { min-height: 22px; margin: 10px 0; color: var(--muted); font-size: 13px; }
+    .history-status[data-state="error"] { color: #e47777; }
+    .history-status[data-state="loading"]::before {
+      display: inline-block;
+      width: 11px;
+      height: 11px;
+      margin-right: 8px;
+      border: 2px solid var(--line);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      content: "";
+      vertical-align: -2px;
+      animation: history-spin .7s linear infinite;
+    }
+    @keyframes history-spin { to { transform: rotate(360deg); } }
+    .history-chart { position: relative; width: 100%; min-height: 220px; flex: 1 1 300px; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: var(--page); cursor: crosshair; touch-action: none; }
+    .history-chart.is-panning { cursor: grabbing; }
+    .history-chart svg { display: block; width: 100%; height: 100%; }
+    .history-chart text { fill: var(--muted); font-family: inherit; font-size: 11px; }
+    .history-chart .chart-grid { stroke: var(--line); stroke-width: 1; }
+    .history-chart .chart-area { fill: var(--accent); opacity: .1; }
+    .history-chart .chart-line { fill: none; stroke: var(--accent-strong); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2.5; }
+    .history-chart .chart-point { fill: var(--surface); stroke: var(--accent-strong); stroke-width: 2; }
+    .history-chart .chart-crosshair { stroke: var(--muted); stroke-dasharray: 4 4; stroke-width: 1; pointer-events: none; }
+    .history-chart .chart-hover-point { fill: var(--accent-strong); stroke: var(--surface); stroke-width: 2; pointer-events: none; }
+    .history-tooltip {
+      position: absolute;
+      z-index: 1;
+      top: 10px;
+      left: 10px;
+      display: grid;
+      gap: 3px;
+      padding: 9px 11px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--surface);
+      box-shadow: 0 5px 16px rgba(0, 0, 0, .18);
+      color: var(--text);
+      font-size: 12px;
+      pointer-events: none;
+    }
+    .history-tooltip[hidden] { display: none; }
+    .history-tooltip span { color: var(--muted); font-size: 11px; }
+    .history-scrollbar { display: flex; flex: 0 0 auto; align-items: center; gap: 12px; padding: 12px 4px 2px; color: var(--muted); font-size: 11px; }
+    .history-scrollbar-label { min-width: 80px; white-space: nowrap; }
+    .history-scroll-track {
+      position: relative;
+      height: 22px;
+      flex: 1 1 auto;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--page);
+      cursor: grab;
+      touch-action: none;
+    }
+    .history-scroll-track[aria-disabled="true"] { cursor: default; opacity: .65; }
+    .history-scroll-track:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 2px; }
+    .history-scroll-thumb {
+      position: absolute;
+      top: 2px;
+      bottom: 2px;
+      left: 0;
+      min-width: 12px;
+      border: 1px solid var(--accent);
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--accent) 45%, var(--surface));
+      cursor: inherit;
+    }
+    .history-scroll-thumb:hover { background: var(--accent); }
+
+    .about-section { margin-top: 72px; padding-top: 30px; border-top: 1px solid var(--line); }
+    .about-section h2 { margin: 0 0 20px; font-size: 23px; letter-spacing: -.035em; }
+    .about-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+    .about-grid h3 { margin: 0 0 8px; font-size: 14px; }
+    .about-grid p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.75; }
+    footer { padding: 24px 0 32px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+
+    @media (max-width: 700px) {
+      .page-shell { width: min(100% - 28px, 540px); }
+      .site-header { height: 70px; }
+      .header-actions { gap: 8px; }
+      .brand { gap: 8px; font-size: 15px; }
+      .brand-mark { width: 36px; height: 36px; border-radius: 11px; }
+      .nav-link { display: none; }
+      .header-preferences { gap: 2px; padding: 3px; border-radius: 12px; }
+      .language-control { height: 36px; gap: 5px; padding: 0 21px 0 7px; }
+      .language-control svg { width: 14px; height: 14px; flex-basis: 14px; }
+      .language-select { width: 74px; height: 34px; font-size: 10px; }
+      .language-control::after { top: 14px; right: 8px; }
+      .preferences-divider { height: 20px; }
+      .theme-switch { min-width: 70px; height: 36px; gap: 4px; padding: 0 5px; font-size: 10px; }
+      .theme-icon { width: 14px; height: 14px; flex-basis: 14px; }
+      .theme-switch .switch-track { width: 34px; height: 20px; flex-basis: 34px; }
+      .theme-switch .switch-track span { width: 12px; height: 12px; }
+      .theme-switch input:checked + .switch-track span { transform: translateX(12px); }
+      main { padding-top: 45px; }
+      .intro { margin-bottom: 26px; }
+      .intro p { font-size: 14px; }
+      .convertion-card { padding: 22px 18px; border-radius: 19px; }
+      .card-heading { align-items: flex-start; flex-direction: column; gap: 7px; }
+      .conversion-layout { grid-template-columns: 1fr; gap: 18px; }
+      .result-panel { align-items: flex-start; padding: 15px 0 0; border-top: 1px solid var(--line); border-left: 0; text-align: left; }
+      .currency-row { grid-template-columns: 1fr 42px 1fr; gap: 7px; }
+      .currency-select { padding: 0 34px 0 8px; font-size: 13px; }
+      .swap-button { width: 36px; height: 36px; margin-bottom: 5px; border-radius: 11px; font-size: 17px; }
+      .rates-section { margin-top: 56px; }
+      .section-heading { align-items: flex-start; flex-direction: column; gap: 6px; }
+      .section-heading h2 { white-space: normal; }
+      .rate-tools { width: 100%; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 10px 14px; }
+      .rate-search { flex: 1 1 100%; max-width: none; }
+      .section-note { white-space: normal; }
+      .rates-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+      .rate-card { align-items: flex-start; flex-direction: column; gap: 10px; padding: 13px; }
+      .rate-value { text-align: left; }
+      .history-controls { align-items: stretch; flex-direction: column; }
+      .history-controls label, .history-controls input { width: 100%; }
+      .history-chart { min-height: 190px; flex-basis: 240px; }
+      .history-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .history-stat:last-child { grid-column: 1 / -1; }
+      .history-tools { align-items: flex-start; flex-direction: column; }
+      .history-zoom { margin-left: 0; }
+      .history-dialog { width: calc(100vw - 20px); min-width: calc(100vw - 20px); height: min(760px, calc(92vh - 12px)); min-height: 350px; max-width: calc(100vw - 20px); max-height: calc(100vh - 12px); resize: both; }
+      .history-scrollbar { gap: 7px; }
+      .history-scrollbar-label { min-width: 0; max-width: 82px; overflow: hidden; text-overflow: ellipsis; }
+      .about-grid { grid-template-columns: 1fr; gap: 20px; }
+    }
+
+    @media (max-width: 400px) {
+      .language-select { width: 64px; }
+      .theme-switch [data-i18n="themeLabel"] { display: none; }
+    }
+
+    @media (max-width: 370px) {
+      .site-header { height: auto; min-height: 70px; padding: 10px 0; gap: 8px; align-items: flex-start; flex-direction: column; }
+      .header-actions { width: 100%; justify-content: flex-end; }
+    }
+
+    @media (max-width: 380px) {
+      .rates-grid { grid-template-columns: 1fr; }
+      .currency-symbol { width: 38px; height: 38px; flex-basis: 38px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <a class="brand" href="#" aria-label="Convertion.uz — главная">
+        <span class="brand-mark" aria-hidden="true">
+          <svg width="26" height="26" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 10h16l-4-4M25 22H9l4 4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="7" cy="10" r="2" fill="currentColor"/><circle cx="25" cy="22" r="2" fill="currentColor"/>
+          </svg>
+        </span>
+        <span>convertion.uz</span>
+      </a>
+      <div class="header-actions">
+        <a class="nav-link" href="#rates" data-i18n="navRates">Текущие курсы валют</a>
+        <div class="header-preferences" role="group" aria-label="Настройки отображения" data-i18n-aria="displayPreferences">
+          <label class="language-control">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <circle cx="10" cy="10" r="7.1" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M3.3 7.5h13.4M3.3 12.5h13.4M10 2.9c1.8 1.8 2.7 4.2 2.7 7.1s-.9 5.3-2.7 7.1c-1.8-1.8-2.7-4.2-2.7-7.1s.9-5.3 2.7-7.1Z" stroke="currentColor" stroke-width="1.2"/>
+            </svg>
+          <select class="language-select" id="language-select" aria-label="Выбор языка">
+              <option value="uz">UZ · O'zbekcha</option>
+              <option value="ru">RU · Русский</option>
+              <option value="en">EN · English</option>
+          </select>
+          </label>
+          <span class="preferences-divider" aria-hidden="true"></span>
+          <label class="theme-switch">
+            <svg class="theme-icon theme-icon-moon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M15.9 12.3A7.1 7.1 0 0 1 7.7 4.1a7.3 7.3 0 1 0 8.2 8.2Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <svg class="theme-icon theme-icon-sun" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <circle cx="10" cy="10" r="3.3" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M10 2.3v1.5m0 12.4v1.5m7.7-7.7h-1.5M3.8 10H2.3m13.1-5.4-1.1 1.1M5.7 14.3l-1.1 1.1m11.1 0-1.1-1.1M5.7 5.7 4.6 4.6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span data-i18n="themeLabel">Тема</span>
+            <input id="theme-toggle" type="checkbox" role="switch" aria-label="Светлая тема" aria-checked="false">
+            <span class="switch-track" aria-hidden="true"><span></span></span>
+          </label>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="intro" aria-labelledby="page-title">
+        <div class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span><span data-i18n="eyebrow">По курсу Центрального банка Узбекистана</span></div>
+        <h1 id="page-title" data-i18n="pageTitle">Конвертер валют</h1>
+        <p data-i18n="pageIntro">Мировые валюты. Понятные цифры. Переводите в сумы и обратно за пару секунд.</p>
+      </section>
+
+      <section class="convertion-card" aria-labelledby="convertion-title">
+        <div class="card-heading">
+          <h2 id="convertion-title" data-i18n="calculator">Калькулятор валют</h2>
+          <div class="live-badge"><span class="live-dot" aria-hidden="true"></span><span data-i18n="autoCalc">Автоматический расчет</span></div>
+        </div>
+        <div class="conversion-layout">
+          <div>
+            <label class="amount-field" for="amount">
+              <span class="field-label" data-i18n="amount">Сумма</span>
+              <span class="number-control">
+                <input class="amount-input" id="amount" type="number" min="0" step="any" value="100" inputmode="decimal">
+                <span class="number-stepper">
+                  <button type="button" data-step="up" aria-label="Увеличить сумму"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 7.5 3-3 3 3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                  <button type="button" data-step="down" aria-label="Уменьшить сумму"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                </span>
+              </span>
+            </label>
+            <div class="currency-row">
+              <label>
+                <span class="field-label" data-i18n="from">Из</span>
+                <span class="select-control">
+                  <select class="currency-select" id="from-currency" aria-label="Исходная валюта"></select>
+                  <span class="select-arrow" aria-hidden="true"></span>
+                </span>
+              </label>
+              <button class="swap-button" id="swap" type="button" aria-label="Поменять валюты местами" title="Поменять валюты местами">⇄</button>
+              <label>
+                <span class="field-label" data-i18n="to">В</span>
+                <span class="select-control">
+                  <select class="currency-select" id="to-currency" aria-label="Целевая валюта"></select>
+                  <span class="select-arrow" aria-hidden="true"></span>
+                </span>
+              </label>
+            </div>
+          </div>
+          <div class="result-panel" aria-live="polite">
+            <div class="result-label" data-i18n="result">Результат</div>
+            <div class="result-amount" id="result">—</div>
+            <p class="rate-line" id="rate-line"></p>
+            <p class="updated-line" id="updated-line" data-i18n="loadingRates">Загружаем официальный курс…</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="rates-section" id="rates" aria-labelledby="rates-title">
+        <div class="section-heading">
+          <div>
+            <div class="section-kicker" data-i18n="currencies">МИРОВЫЕ ВАЛЮТЫ</div>
+            <h2 id="rates-title" data-i18n="ratesTitle">Текущие курсы валют</h2>
+          </div>
+          <div class="rate-tools">
+            <label class="rate-search">
+              <span class="search-icon" aria-hidden="true">⌕</span>
+              <input id="rate-search" type="search" autocomplete="off" placeholder="Поиск по стране или валюте" aria-label="Поиск по стране или валюте">
+            </label>
+            <label class="rate-amount-control">
+              <span data-i18n="rateAmount">Сумма</span>
+              <span class="number-control">
+                <input id="rate-amount" type="number" min="0" step="any" value="1" inputmode="decimal" aria-label="Сумма для расчёта курса">
+                <span class="number-stepper">
+                  <button type="button" data-step="up" aria-label="Увеличить сумму"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 7.5 3-3 3 3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                  <button type="button" data-step="down" aria-label="Уменьшить сумму"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                </span>
+              </span>
+            </label>
+            <span class="section-note" id="rates-note" data-i18n="ratesNote">Сумма в валюте → UZS</span>
+            <label class="rate-switch">
+              <span data-i18n="reverseRates">Курс наоборот</span>
+              <input id="rate-view-toggle" type="checkbox" role="switch" aria-label="Показать обратный курс">
+              <span class="switch-track" aria-hidden="true"><span></span></span>
+            </label>
+          </div>
+        </div>
+        <p class="rate-count" id="rate-count" aria-live="polite"></p>
+        <div class="rates-grid" id="rates-grid"></div>
+        <div class="rates-more-wrap">
+          <button class="rates-more" id="rates-more" type="button" aria-expanded="false" data-i18n="showAllRates">Показать все курсы</button>
+        </div>
+        <p class="rate-empty" id="rate-empty" hidden data-i18n="noRatesFound">Ничего не найдено</p>
+      </section>
+
+      <dialog class="history-dialog" id="history-dialog" aria-labelledby="history-title">
+        <div class="history-dialog-inner">
+          <div class="history-heading">
+            <div>
+              <h2 id="history-title"></h2>
+              <p id="history-subtitle"></p>
+            </div>
+            <button class="history-close" id="history-close" type="button" aria-label="Закрыть" data-i18n-aria="historyClose" data-i18n-title="historyClose">×</button>
+          </div>
+          <div class="history-controls">
+            <label for="history-from"><span data-i18n="historyFrom">С даты</span><input id="history-from" type="date"></label>
+            <label for="history-to"><span data-i18n="historyTo">По дату</span><input id="history-to" type="date"></label>
+            <div class="history-tools">
+              <div class="history-presets" role="group" aria-label="Быстрый выбор периода" data-i18n-aria="historyPresets">
+                <button class="history-tool-button" type="button" data-history-range="1m" data-i18n="history1m">1 мес.</button>
+                <button class="history-tool-button" type="button" data-history-range="3m" data-i18n="history3m">3 мес.</button>
+                <button class="history-tool-button" type="button" data-history-range="6m" data-i18n="history6m">6 мес.</button>
+                <button class="history-tool-button" type="button" data-history-range="1y" data-i18n="history1y">1 год</button>
+                <button class="history-tool-button" type="button" data-history-range="3y" data-i18n="history3y">3 года</button>
+                <button class="history-tool-button" type="button" data-history-range="5y" data-i18n="history5y">5 лет</button>
+                <button class="history-tool-button" type="button" data-history-range="7y" data-i18n="history7y">7 лет</button>
+                <button class="history-tool-button" type="button" data-history-range="all" data-i18n="historyAll">Всё</button>
+              </div>
+              <div class="history-zoom" role="group" aria-label="Масштаб графика" data-i18n-aria="historyZoom">
+                <button class="history-tool-button" id="history-zoom-out" type="button" aria-label="Отдалить график" data-i18n-aria="historyZoomOut" data-i18n-title="historyZoomOut">−</button>
+                <button class="history-tool-button" id="history-zoom-in" type="button" aria-label="Приблизить график" data-i18n-aria="historyZoomIn" data-i18n-title="historyZoomIn">+</button>
+                <button class="history-tool-button" id="history-zoom-reset" type="button" data-i18n="historyReset" data-i18n-title="historyReset">Сбросить масштаб</button>
+              </div>
+            </div>
+          </div>
+          <p class="history-hint" data-i18n="historyHelp">Колесо мыши — масштаб, перетаскивание — сдвиг графика, наведите курсор для значений. Потяните за нижний правый угол окна, чтобы изменить его размер.</p>
+          <p class="history-status" id="history-status" role="status" aria-live="polite"></p>
+          <div class="history-stats" id="history-stats" aria-label="Статистика за период" data-i18n-aria="historyStats">
+            <div class="history-stat"><span data-i18n="historyLatest">Последнее значение</span><strong id="history-stat-latest">—</strong></div>
+            <div class="history-stat"><span data-i18n="historyMinimum">Минимум</span><strong id="history-stat-min">—</strong></div>
+            <div class="history-stat"><span data-i18n="historyMaximum">Максимум</span><strong id="history-stat-max">—</strong></div>
+            <div class="history-stat"><span data-i18n="historyAverage">Среднее</span><strong id="history-stat-average">—</strong></div>
+            <div class="history-stat"><span data-i18n="historyChange">Изменение за период</span><strong id="history-stat-change">—</strong></div>
+          </div>
+          <div class="history-chart" id="history-chart">
+            <div class="history-tooltip" id="history-tooltip" hidden><strong></strong><span></span></div>
+          </div>
+          <div class="history-scrollbar">
+            <span class="history-scrollbar-label" id="history-scroll-start"></span>
+            <div class="history-scroll-track" id="history-scroll-track" role="scrollbar" tabindex="0" aria-orientation="horizontal" aria-controls="history-chart" aria-label="Прокрутка периода графика" data-i18n-aria="historyScrollbar">
+              <span class="history-scroll-thumb" id="history-scroll-thumb"></span>
+            </div>
+            <span class="history-scrollbar-label" id="history-scroll-end"></span>
+          </div>
+        </div>
+      </dialog>
+
+      <section class="about-section" aria-labelledby="about-title">
+        <h2 id="about-title" data-i18n="aboutTitle">О конвертере валют</h2>
+        <div class="about-grid">
+          <article>
+            <h3 data-i18n="aboutEasyTitle">Просто и удобно</h3>
+            <p data-i18n="aboutEasyText">Введите сумму, выберите валюты — результат пересчитывается автоматически. Кнопка со стрелками меняет направления конвертации местами.</p>
+          </article>
+          <article>
+            <h3 data-i18n="aboutRatesTitle">Официальные курсы</h3>
+            <p data-i18n="aboutRatesText">Курсы загружаются с сайта Центрального банка Республики Узбекистан.</p>
+          </article>
+          <article>
+            <h3 data-i18n="aboutCurrenciesTitle">Поддерживаемые валюты</h3>
+            <p data-i18n="aboutCurrenciesText">Доллар США, евро, российский рубль и другие валюты к узбекскому суму.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer data-i18n="footer">Convertion.uz · Курсы валют Центрального банка Узбекистана</footer>
+  </div>
+
+  <script>
+    const currencyMetadata = {
+      USD: ["🇺🇸", "$"], EUR: ["🇪🇺", "€"], RUB: ["🇷🇺", "₽"], GBP: ["🇬🇧", "£"],
+      JPY: ["🇯🇵", "¥"], AZN: ["🇦🇿", "₼"], BDT: ["🇧🇩", "৳"], BHD: ["🇧🇭", "د.ب"],
+      BND: ["🇧🇳", "$"], BRL: ["🇧🇷", "R$"], BYN: ["🇧🇾", "Br"], CAD: ["🇨🇦", "$"],
+      CHF: ["🇨🇭", "Fr"], CNY: ["🇨🇳", "¥"], CUP: ["🇨🇺", "$"], CZK: ["🇨🇿", "Kč"],
+      DKK: ["🇩🇰", "kr"], DZD: ["🇩🇿", "دج"], EGP: ["🇪🇬", "£"], AFN: ["🇦🇫", "؋"],
+      ARS: ["🇦🇷", "$"], GEL: ["🇬🇪", "₾"], HKD: ["🇭🇰", "$"], HUF: ["🇭🇺", "Ft"],
+      IDR: ["🇮🇩", "Rp"], ILS: ["🇮🇱", "₪"], INR: ["🇮🇳", "₹"], IQD: ["🇮🇶", "ع.د"],
+      IRR: ["🇮🇷", "﷼"], ISK: ["🇮🇸", "kr"], JOD: ["🇯🇴", "د.ا"], AUD: ["🇦🇺", "$"],
+      KGS: ["🇰🇬", "с"], KHR: ["🇰🇭", "៛"], KRW: ["🇰🇷", "₩"], KWD: ["🇰🇼", "د.ك"],
+      KZT: ["🇰🇿", "₸"], LAK: ["🇱🇦", "₭"], LBP: ["🇱🇧", "ل.ل"], LYD: ["🇱🇾", "ل.د"],
+      MAD: ["🇲🇦", "د.م."], MDL: ["🇲🇩", "L"], MMK: ["🇲🇲", "K"], MNT: ["🇲🇳", "₮"],
+      MXN: ["🇲🇽", "$"], MYR: ["🇲🇾", "RM"], NOK: ["🇳🇴", "kr"], NZD: ["🇳🇿", "$"],
+      OMR: ["🇴🇲", "ر.ع."], PHP: ["🇵🇭", "₱"], PKR: ["🇵🇰", "₨"], PLN: ["🇵🇱", "zł"],
+      QAR: ["🇶🇦", "ر.ق"], RON: ["🇷🇴", "lei"], RSD: ["🇷🇸", "дин"], AMD: ["🇦🇲", "֏"],
+      SAR: ["🇸🇦", "ر.س"], SDG: ["🇸🇩", "ج.س"], SEK: ["🇸🇪", "kr"], SGD: ["🇸🇬", "$"],
+      SYP: ["🇸🇾", "£"], THB: ["🇹🇭", "฿"], TJS: ["🇹🇯", "ЅМ"], TMT: ["🇹🇲", "m"],
+      TND: ["🇹🇳", "د.ت"], TRY: ["🇹🇷", "₺"], UAH: ["🇺🇦", "₴"], AED: ["🇦🇪", "د.إ"],
+      UYU: ["🇺🇾", "$"], VES: ["🇻🇪", "Bs"], VND: ["🇻🇳", "₫"], XDR: ["🌐", "XDR"],
+      YER: ["🇾🇪", "﷼"], ZAR: ["🇿🇦", "R"]
+    };
+
+    const uzsCurrency = {
+      code: "UZS",
+      flag: "🇺🇿",
+      symbol: "so'm",
+      rate: 1,
+      nominal: 1,
+      region: "UZ",
+      names: { ru: "Узбекский сум", uz: "O'zbek so'mi", en: "Uzbekistani som" }
+    };
+    let currencies = [uzsCurrency];
+
+    const translations = {
+      ru: {
+        navRates: "Текущие курсы валют", eyebrow: "По курсу Центрального банка Узбекистана", pageTitle: "Конвертер валют",
+        pageIntro: "Мировые валюты. Понятные цифры. Переводите в сумы и обратно за пару секунд.",
+        calculator: "Калькулятор валют", autoCalc: "Автоматический расчет", amount: "Сумма", from: "Из", to: "В",
+        result: "Результат", currencies: "МИРОВЫЕ ВАЛЮТЫ", ratesTitle: "Текущие курсы валют",
+        ratesNote: "Сумма в валюте → UZS", reverseRatesNote: "Сумма в UZS → валюта",
+        rateAmount: "Сумма", reverseRates: "Обратный курс",
+        searchPlaceholder: "Поиск по стране или валюте", searchLabel: "Поиск по стране или названию валюты",
+        resultsFound: "Найдено валют: {count}", noRatesFound: "Ничего не найдено. Попробуйте изменить запрос.",
+        showAllRates: "Показать все курсы", showLessRates: "Свернуть список", themeLabel: "Тема",
+        themeLight: "Светлая тема", themeDark: "Тёмная тема", languageLabel: "Выбор языка", displayPreferences: "Настройки отображения",
+        international: "Международная расчётная единица", aboutTitle: "О конвертере валют", aboutEasyTitle: "Просто и удобно",
+        aboutEasyText: "Введите сумму, выберите валюты — результат пересчитывается автоматически. Кнопка со стрелками меняет направления конвертации местами.",
+        aboutRatesTitle: "Официальные курсы", aboutRatesText: "Курсы загружаются с сайта Центрального банка Республики Узбекистан.",
+        aboutCurrenciesTitle: "Поддерживаемые валюты", aboutCurrenciesText: "Доллар США, евро, российский рубль и другие валюты к узбекскому суму.",
+        footer: "Convertion.uz · Курсы валют Центрального банка Узбекистана",
+        loadingRates: "Загружаем официальный курс…", loadError: "Не удалось загрузить курсы ЦБ. Проверьте подключение и откройте страницу через веб-сервер.",
+        invalidAmount: "Введите корректную сумму", noRate: "Курс недоступен", source: "Последний опубликованный курс ЦБ",
+        historyTitle: "Динамика курса", historyFrom: "С даты", historyTo: "По дату", historyClose: "Закрыть",
+        historyLoading: "Загружаем историю курса…", historyError: "Не удалось загрузить историю курса ЦБ. Попробуйте позже.",
+        historyNoData: "За выбранный период опубликованных значений нет.",
+        historyInvalidRange: "Дата начала должна быть раньше даты окончания.",
+        historyPoints: "Точек на графике: {count}", historyChartLabel: "График курса {code} в узбекских сумах",
+        historyPresets: "Быстрый выбор периода", historyZoom: "Масштаб графика", historyZoomIn: "Приблизить график",
+        historyZoomOut: "Отдалить график", historyReset: "Сбросить масштаб", history1m: "1 мес.", history3m: "3 мес.",
+        history6m: "6 мес.", history1y: "1 год", history3y: "3 года", history5y: "5 лет", history7y: "7 лет",
+        historyAll: "Всё", historyStats: "Статистика за период", historyScrollbar: "Прокрутка периода графика",
+        historyLatest: "Последнее значение", historyMinimum: "Минимум", historyMaximum: "Максимум",
+        historyAverage: "Среднее", historyChange: "Изменение за период",
+        historyHelp: "Колесо мыши — масштаб, перетаскивание — сдвиг графика, наведите курсор для значений. Потяните за нижний правый угол окна, чтобы изменить его размер."
+      },
+      uz: {
+        navRates: "Joriy valyuta kurslari", eyebrow: "O'zbekiston Markaziy banki kursi bo'yicha", pageTitle: "Valyuta konvertori",
+        pageIntro: "Jahon valyutalari. Aniq hisob-kitob. So'mga va aksincha bir necha soniyada o'tkazing.",
+        calculator: "Valyuta kalkulyatori", autoCalc: "Avtomatik hisob-kitob", amount: "Miqdor", from: "Dan", to: "Ga",
+        result: "Natija", currencies: "JAHON VALYUTALARI", ratesTitle: "Joriy valyuta kurslari",
+        ratesNote: "Valyuta miqdori → UZS", reverseRatesNote: "UZS miqdori → valyuta",
+        rateAmount: "Miqdor", reverseRates: "Teskari kurs",
+        searchPlaceholder: "Mamlakat yoki valyuta bo'yicha qidirish", searchLabel: "Mamlakat yoki valyuta nomi bo'yicha qidirish",
+        resultsFound: "Topilgan valyutalar: {count}", noRatesFound: "Hech narsa topilmadi. Qidiruvni o'zgartirib ko'ring.",
+        showAllRates: "Barcha kurslarni ko'rsatish", showLessRates: "Ro'yxatni yig'ish", themeLabel: "Mavzu",
+        themeLight: "Yorug' mavzu", themeDark: "Qorong'i mavzu", languageLabel: "Tilni tanlash", displayPreferences: "Ko'rinish sozlamalari",
+        international: "Xalqaro hisob-kitob birligi", aboutTitle: "Valyuta konvertori haqida", aboutEasyTitle: "Oddiy va qulay",
+        aboutEasyText: "Miqdorni kiriting va valyutalarni tanlang — natija avtomatik hisoblanadi. Strelkali tugma konvertatsiya yo'nalishini almashtiradi.",
+        aboutRatesTitle: "Rasmiy kurslar", aboutRatesText: "Kurslar O'zbekiston Respublikasi Markaziy banki saytidan yuklanadi.",
+        aboutCurrenciesTitle: "Qo'llab-quvvatlanadigan valyutalar", aboutCurrenciesText: "AQSH dollari, yevro, Rossiya rubli va boshqa valyutalar o'zbek so'miga nisbatan.",
+        footer: "Convertion.uz · O'zbekiston Markaziy bankining valyuta kurslari",
+        loadingRates: "Rasmiy kurs yuklanmoqda…", loadError: "Markaziy bank kurslarini yuklab bo'lmadi. Internetni tekshiring va sahifani veb-server orqali oching.",
+        invalidAmount: "To'g'ri miqdorni kiriting", noRate: "Kurs mavjud emas", source: "Markaziy bank e'lon qilgan so'nggi kurs",
+        historyTitle: "Valyuta kursi dinamikasi", historyFrom: "Boshlanish sanasi", historyTo: "Tugash sanasi", historyClose: "Yopish",
+        historyLoading: "Valyuta kursi tarixi yuklanmoqda…", historyError: "Markaziy bank kursi tarixini yuklab bo'lmadi. Keyinroq urinib ko'ring.",
+        historyNoData: "Tanlangan davr uchun e'lon qilingan qiymatlar yo'q.",
+        historyInvalidRange: "Boshlanish sanasi tugash sanasidan oldin bo'lishi kerak.",
+        historyPoints: "Grafikdagi nuqtalar: {count}", historyChartLabel: "{code} valyuta kursining o'zbek so'midagi grafigi",
+        historyPresets: "Davrni tez tanlash", historyZoom: "Grafik masshtabi", historyZoomIn: "Grafikni yaqinlashtirish",
+        historyZoomOut: "Grafikni uzoqlashtirish", historyReset: "Masshtabni tiklash", history1m: "1 oy", history3m: "3 oy",
+        history6m: "6 oy", history1y: "1 yil", history3y: "3 yil", history5y: "5 yil", history7y: "7 yil",
+        historyAll: "Hammasi", historyStats: "Davr statistikasi", historyScrollbar: "Grafik davri bo'ylab surish",
+        historyLatest: "So'nggi qiymat", historyMinimum: "Eng kam", historyMaximum: "Eng ko'p",
+        historyAverage: "O'rtacha", historyChange: "Davrdagi o'zgarish",
+        historyHelp: "Sichqoncha g'ildiragi — masshtab, sudrash — grafikni siljitish, qiymatlarni ko'rish uchun kursorni olib boring. Oyna o'lchamini o'zgartirish uchun pastki o'ng burchakni torting."
+      },
+      en: {
+        navRates: "Current exchange rates", eyebrow: "Central Bank of Uzbekistan exchange rates", pageTitle: "Currency converter",
+        pageIntro: "World currencies. Clear numbers. Convert to and from Uzbek som in seconds.",
+        calculator: "Currency calculator", autoCalc: "Automatic calculation", amount: "Amount", from: "From", to: "To",
+        result: "Result", currencies: "WORLD CURRENCIES", ratesTitle: "Current exchange rates",
+        ratesNote: "Currency amount → UZS", reverseRatesNote: "UZS amount → currency",
+        rateAmount: "Amount", reverseRates: "Reverse rate",
+        searchPlaceholder: "Search by country or currency", searchLabel: "Search by country or currency name",
+        resultsFound: "Currencies found: {count}", noRatesFound: "No currencies found. Try a different search.",
+        showAllRates: "Show all rates", showLessRates: "Show fewer", themeLabel: "Theme",
+        themeLight: "Light theme", themeDark: "Dark theme", languageLabel: "Choose language", displayPreferences: "Display settings",
+        international: "International reserve asset", aboutTitle: "About the currency converter", aboutEasyTitle: "Simple and convenient",
+        aboutEasyText: "Enter an amount and choose currencies — the result updates automatically. Use the arrow button to swap conversion directions.",
+        aboutRatesTitle: "Official exchange rates", aboutRatesText: "Rates are retrieved from the Central Bank of the Republic of Uzbekistan.",
+        aboutCurrenciesTitle: "Supported currencies", aboutCurrenciesText: "US dollar, euro, Russian ruble, and more currencies against the Uzbek som.",
+        footer: "Convertion.uz · Central Bank of Uzbekistan exchange rates",
+        loadingRates: "Loading official exchange rates…", loadError: "Could not load Central Bank rates. Check your connection and open this page through a web server.",
+        invalidAmount: "Enter a valid amount", noRate: "Rate unavailable", source: "Latest rate published by the Central Bank",
+        historyTitle: "Exchange rate history", historyFrom: "From date", historyTo: "To date", historyClose: "Close",
+        historyLoading: "Loading exchange rate history…", historyError: "Could not load Central Bank rate history. Please try again later.",
+        historyNoData: "No published rates are available for this period.",
+        historyInvalidRange: "The start date must be earlier than the end date.",
+        historyPoints: "Chart points: {count}", historyChartLabel: "{code} exchange rate chart in Uzbek som",
+        historyPresets: "Quick period selection", historyZoom: "Chart zoom", historyZoomIn: "Zoom in",
+        historyZoomOut: "Zoom out", historyReset: "Reset zoom", history1m: "1 mo.", history3m: "3 mo.",
+        history6m: "6 mo.", history1y: "1 yr.", history3y: "3 yrs.", history5y: "5 yrs.", history7y: "7 yrs.",
+        historyAll: "All", historyStats: "Period statistics", historyScrollbar: "Scroll the chart time period",
+        historyLatest: "Latest value", historyMinimum: "Minimum", historyMaximum: "Maximum",
+        historyAverage: "Average", historyChange: "Change over period",
+        historyHelp: "Scroll to zoom, drag to pan, and hover to inspect values. Drag the lower-right corner of the window to resize it."
+      }
+    };
+
+    function readPreference(key, allowedValues, fallback) {
+      try {
+        const value = window.localStorage.getItem(key);
+        return allowedValues.includes(value) ? value : fallback;
+      } catch (error) {
+        console.warn(`Could not read saved preference "${key}":`, error);
+        return fallback;
+      }
+    }
+
+    function savePreference(key, value) {
+      try {
+        window.localStorage.setItem(key, value);
+      } catch (error) {
+        console.warn(`Could not save preference "${key}":`, error);
+      }
+    }
+
+    const apiUrl = "https://cbu.uz/ru/arkhiv-kursov-valyut/json/";
+    const amountInput = document.querySelector("#amount");
+    const fromSelect = document.querySelector("#from-currency");
+    const toSelect = document.querySelector("#to-currency");
+    const result = document.querySelector("#result");
+    const rateLine = document.querySelector("#rate-line");
+    const updatedLine = document.querySelector("#updated-line");
+    const ratesGrid = document.querySelector("#rates-grid");
+    const rateSearch = document.querySelector("#rate-search");
+    const rateAmountInput = document.querySelector("#rate-amount");
+    const rateCount = document.querySelector("#rate-count");
+    const rateEmpty = document.querySelector("#rate-empty");
+    const ratesMoreButton = document.querySelector("#rates-more");
+    const ratesNote = document.querySelector("#rates-note");
+    const rateViewToggle = document.querySelector("#rate-view-toggle");
+    const historyDialog = document.querySelector("#history-dialog");
+    const historyTitle = document.querySelector("#history-title");
+    const historySubtitle = document.querySelector("#history-subtitle");
+    const historyFromInput = document.querySelector("#history-from");
+    const historyToInput = document.querySelector("#history-to");
+    const historyStatus = document.querySelector("#history-status");
+    const historyChart = document.querySelector("#history-chart");
+    const historyTooltip = document.querySelector("#history-tooltip");
+    const historyStatLatest = document.querySelector("#history-stat-latest");
+    const historyStatMin = document.querySelector("#history-stat-min");
+    const historyStatMax = document.querySelector("#history-stat-max");
+    const historyStatAverage = document.querySelector("#history-stat-average");
+    const historyStatChange = document.querySelector("#history-stat-change");
+    const historyScrollTrack = document.querySelector("#history-scroll-track");
+    const historyScrollThumb = document.querySelector("#history-scroll-thumb");
+    const historyScrollStart = document.querySelector("#history-scroll-start");
+    const historyScrollEnd = document.querySelector("#history-scroll-end");
+    const languageSelect = document.querySelector("#language-select");
+    const themeToggle = document.querySelector("#theme-toggle");
+    const localeCodes = { ru: "ru-RU", uz: "uz-UZ", en: "en-US" };
+    let activeLanguage = readPreference("convertion-language", ["ru", "uz", "en"], "ru");
+    let officialRateDate = null;
+    let rateLoadFailed = false;
+    let rateRequestInProgress = false;
+    let showReverseRates = false;
+    let showAllRates = false;
+    let rateListAnimationTimer = null;
+    let rateListTransitionHandler = null;
+    const historyCache = new Map();
+    let selectedHistoryCurrency = null;
+    let selectedHistorySeries = null;
+    let historyRequestController = null;
+    let historyRequestId = 0;
+    let historyViewStart = null;
+    let historyViewEnd = null;
+    let historyPointerRatio = 0.5;
+    let historyPanState = null;
+    let historyCloseTimer = null;
+    let renderedHistoryWidth = 0;
+    let renderedHistoryHeight = 0;
+    let historyScrollbarDrag = null;
+    const primaryCurrencyCodes = ["USD", "EUR", "RUB", "GBP", "JPY", "CNY", "KZT", "TRY", "CHF"];
+
+    function applyTheme(theme) {
+      const light = theme === "light";
+      document.documentElement.dataset.theme = light ? "light" : "dark";
+      themeToggle.checked = light;
+      themeToggle.setAttribute("aria-label", translations[activeLanguage][light ? "themeLight" : "themeDark"]);
+      themeToggle.setAttribute("aria-checked", String(light));
+      document.querySelector('meta[name="theme-color"]').content = light ? "#f5f7fb" : "#101a2d";
+    }
+
+    applyTheme(readPreference("convertion-theme", ["light", "dark"], "dark"));
+
+    function formatNumber(value, options) {
+      return new Intl.NumberFormat(localeCodes[activeLanguage], options).format(value);
+    }
+
+    function updateRateStatus() {
+      const labels = translations[activeLanguage];
+      updatedLine.textContent = rateLoadFailed
+        ? labels.loadError
+        : officialRateDate
+          ? `${labels.source} · ${officialRateDate}`
+          : labels.loadingRates;
+    }
+
+    function currencyName(currency) {
+      return currency.names[activeLanguage] || currency.names.ru;
+    }
+
+    function countryName(currency, language = activeLanguage) {
+      if (!currency.region) return translations[language].international;
+      return new Intl.DisplayNames([localeCodes[language]], { type: "region" }).of(currency.region)
+        || translations[language].international;
+    }
+
+    function searchKey(value) {
+      return value.toLocaleLowerCase(localeCodes[activeLanguage]).normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+    }
+
+    function updateRateControls() {
+      const labels = translations[activeLanguage];
+      rateSearch.placeholder = labels.searchPlaceholder;
+      rateSearch.setAttribute("aria-label", labels.searchLabel);
+      rateAmountInput.setAttribute("aria-label", labels.rateAmount);
+      rateViewToggle.checked = showReverseRates;
+      ratesNote.textContent = showReverseRates ? labels.reverseRatesNote : labels.ratesNote;
+    }
+
+    function countryFlagCode(flag) {
+      const indicators = Array.from(flag, (character) => character.codePointAt(0))
+        .filter((point) => point >= 0x1f1e6 && point <= 0x1f1ff);
+      if (indicators.length !== 2) return null;
+      return String.fromCharCode(...indicators.map((point) => point - 0x1f1e6 + 65)).toLowerCase();
+    }
+
+    function buildOptions() {
+      [fromSelect, toSelect].forEach((select) => {
+        const selectedCode = select.value;
+        select.replaceChildren();
+        currencies.forEach((currency) => {
+          const option = new Option(`${currency.flag} ${currency.code} — ${currencyName(currency)}`, currency.code);
+          select.add(option);
+        });
+        if (selectedCode) select.value = selectedCode;
+      });
+    }
+
+    function renderRateCards() {
+      ratesGrid.replaceChildren();
+      const query = searchKey(rateSearch.value);
+      const inputAmount = Number(rateAmountInput.value);
+      const validAmount = rateAmountInput.value.trim() !== "" && Number.isFinite(inputAmount) && inputAmount >= 0;
+      rateAmountInput.setAttribute("aria-invalid", String(!validAmount));
+      const matchingCurrencies = currencies.filter((currency) => {
+        if (currency.code === "UZS") return false;
+        const searchableText = [
+          currency.code,
+          currency.symbol,
+          currencyName(currency),
+          ...Object.values(currency.names),
+          ...Object.keys(localeCodes).map((language) => countryName(currency, language))
+        ].join(" ");
+        return !query || searchKey(searchableText).includes(query);
+      });
+      if (!query) {
+        matchingCurrencies.sort((left, right) => {
+          const leftRank = primaryCurrencyCodes.indexOf(left.code);
+          const rightRank = primaryCurrencyCodes.indexOf(right.code);
+          return (leftRank < 0 ? primaryCurrencyCodes.length : leftRank)
+            - (rightRank < 0 ? primaryCurrencyCodes.length : rightRank);
+        });
+      }
+      const visibleCurrencies = query || showAllRates
+        ? matchingCurrencies
+        : matchingCurrencies.slice(0, 9);
+
+      visibleCurrencies.forEach((currency) => {
+        const card = document.createElement("article");
+        card.className = "rate-card";
+        card.tabIndex = 0;
+        card.setAttribute("role", "button");
+        card.setAttribute("aria-haspopup", "dialog");
+        card.setAttribute("aria-label", `${translations[activeLanguage].historyTitle}: ${currency.code} — ${currencyName(currency)}`);
+        card.addEventListener("click", () => openCurrencyHistory(currency));
+        card.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            openCurrencyHistory(currency);
+          }
+        });
+        const currencyInfo = document.createElement("div");
+        currencyInfo.className = "rate-currency";
+        const icon = document.createElement("span");
+        icon.className = "currency-symbol";
+        icon.setAttribute("aria-label", `${currency.symbol}, ${currency.flag}`);
+        const flagCode = countryFlagCode(currency.flag);
+        const flag = document.createElement(flagCode ? "img" : "span");
+        flag.className = flagCode ? "currency-flag" : "currency-flag-generic";
+        flag.setAttribute("aria-hidden", "true");
+        if (flagCode) {
+          flag.src = `https://flagcdn.com/24x18/${flagCode}.png`;
+          flag.alt = "";
+        } else {
+          flag.textContent = currency.flag;
+        }
+        const symbol = document.createElement("span");
+        symbol.className = "currency-glyph";
+        symbol.textContent = currency.symbol;
+        const code = document.createElement("strong");
+        code.textContent = currency.code;
+        const description = document.createElement("span");
+        description.textContent = `${countryName(currency)} · ${currencyName(currency)}`;
+        const name = document.createElement("div");
+        name.className = "rate-name";
+        name.append(code, description);
+        icon.append(flag, symbol);
+        currencyInfo.append(icon, name);
+        const value = document.createElement("div");
+        value.className = "rate-value";
+        const amount = document.createElement("strong");
+        const displayedRate = currency.rate === null || !validAmount
+          ? null
+          : showReverseRates
+            ? inputAmount / currency.rate
+            : inputAmount * currency.rate;
+        amount.textContent = currency.rate === null || !Number.isFinite(displayedRate)
+          ? "—"
+          : formatNumber(displayedRate, showReverseRates
+            ? { maximumSignificantDigits: 7 }
+            : { minimumFractionDigits: 2, maximumFractionDigits: 6 });
+        const unit = document.createElement("span");
+        unit.textContent = showReverseRates ? currency.code : "UZS";
+        value.append(amount, unit);
+        card.append(currencyInfo, value);
+        ratesGrid.append(card);
+      });
+      rateCount.textContent = translations[activeLanguage].resultsFound.replace("{count}", String(matchingCurrencies.length));
+      rateEmpty.hidden = matchingCurrencies.length > 0;
+      ratesGrid.hidden = matchingCurrencies.length === 0;
+      const showExpansion = !query && matchingCurrencies.length > 9;
+      ratesMoreButton.parentElement.hidden = !showExpansion;
+      ratesMoreButton.textContent = translations[activeLanguage][showAllRates ? "showLessRates" : "showAllRates"];
+      ratesMoreButton.setAttribute("aria-expanded", String(showAllRates));
+    }
+
+    function setRatesExpanded(expanded) {
+      if (rateListTransitionHandler) ratesGrid.removeEventListener("transitionend", rateListTransitionHandler);
+      window.clearTimeout(rateListAnimationTimer);
+      const currentHeight = ratesGrid.getBoundingClientRect().height;
+      showAllRates = expanded;
+      ratesGrid.classList.add("is-animated");
+      ratesGrid.style.maxHeight = `${currentHeight}px`;
+      ratesGrid.style.overflow = "hidden";
+      renderRateCards();
+
+      requestAnimationFrame(() => {
+        ratesGrid.style.maxHeight = `${ratesGrid.scrollHeight}px`;
+      });
+
+      const finishTransition = (event) => {
+        if (event && (event.target !== ratesGrid || event.propertyName !== "max-height")) return;
+        ratesGrid.removeEventListener("transitionend", rateListTransitionHandler);
+        rateListTransitionHandler = null;
+        ratesGrid.classList.remove("is-animated");
+        ratesGrid.style.maxHeight = "";
+        ratesGrid.style.overflow = "";
+      };
+      rateListTransitionHandler = finishTransition;
+      ratesGrid.addEventListener("transitionend", finishTransition);
+      rateListAnimationTimer = window.setTimeout(() => finishTransition(), 450);
+    }
+
+    function updateHistoryStatus(state, message) {
+      historyStatus.dataset.state = state;
+      historyStatus.textContent = message;
+    }
+
+    function formatHistoryDate(date) {
+      return new Intl.DateTimeFormat(localeCodes[activeLanguage], {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        timeZone: "UTC"
+      }).format(new Date(`${date}T00:00:00Z`));
+    }
+
+    function configureHistoryDates(series) {
+      const firstDate = series[0].date;
+      const lastDate = series[series.length - 1].date;
+      const defaultStart = new Date(`${lastDate}T00:00:00Z`);
+      defaultStart.setUTCFullYear(defaultStart.getUTCFullYear() - 1);
+      const firstAvailable = new Date(`${firstDate}T00:00:00Z`);
+      const startDate = defaultStart < firstAvailable ? firstDate : defaultStart.toISOString().slice(0, 10);
+      historyFromInput.min = firstDate;
+      historyFromInput.max = lastDate;
+      historyToInput.min = firstDate;
+      historyToInput.max = lastDate;
+      historyFromInput.value = startDate;
+      historyToInput.value = lastDate;
+      historyFromInput.disabled = false;
+      historyToInput.disabled = false;
+      historyViewStart = null;
+      historyViewEnd = null;
+      setActiveHistoryPreset("1y");
+      renderHistoryChart();
+    }
+
+    function setActiveHistoryPreset(range) {
+      document.querySelectorAll("[data-history-range]").forEach((button) => {
+        const active = button.dataset.historyRange === range;
+        button.classList.toggle("is-active", active);
+        button.setAttribute("aria-pressed", String(active));
+      });
+    }
+
+    function updateHistoryScrollbar(bounds, viewStart, viewEnd) {
+      const totalSpan = bounds.end - bounds.start;
+      const viewSpan = viewEnd - viewStart;
+      const thumbRatio = totalSpan > 0 ? Math.min(1, viewSpan / totalSpan) : 1;
+      const maxStart = Math.max(1, totalSpan - viewSpan);
+      const positionRatio = thumbRatio >= 1 ? 0 : (viewStart - bounds.start) / maxStart;
+      historyScrollThumb.style.width = `${Math.max(thumbRatio * 100, 4)}%`;
+      historyScrollThumb.style.left = `${Math.max(0, Math.min(100 - Math.max(thumbRatio * 100, 4), positionRatio * (1 - thumbRatio) * 100))}%`;
+      historyScrollTrack.setAttribute("aria-disabled", String(thumbRatio >= 1));
+      historyScrollTrack.setAttribute("aria-valuemin", "0");
+      historyScrollTrack.setAttribute("aria-valuemax", "1000");
+      historyScrollTrack.setAttribute("aria-valuenow", String(Math.round(positionRatio * 1000)));
+      historyScrollTrack.setAttribute("aria-valuetext", `${formatHistoryDate(new Date(viewStart).toISOString().slice(0, 10))} – ${formatHistoryDate(new Date(viewEnd).toISOString().slice(0, 10))}`);
+      historyScrollStart.textContent = formatHistoryDate(new Date(viewStart).toISOString().slice(0, 10));
+      historyScrollEnd.textContent = formatHistoryDate(new Date(viewEnd).toISOString().slice(0, 10));
+    }
+
+    function moveHistoryScrollbarTo(positionRatio, bounds, viewSpan = historyViewEnd - historyViewStart) {
+      const maxStart = bounds.end - bounds.start - viewSpan;
+      const start = bounds.start + Math.max(0, Math.min(1, positionRatio)) * Math.max(0, maxStart);
+      setHistoryViewport(start, start + viewSpan, bounds);
+    }
+
+    function updateHistoryStatistics(points, numberFormatter) {
+      const values = points.map((point) => point.value);
+      const firstValue = points[0].value;
+      const latestValue = points[points.length - 1].value;
+      const minimum = Math.min(...values);
+      const maximum = Math.max(...values);
+      const average = values.reduce((sum, value) => sum + value, 0) / values.length;
+      const change = firstValue === 0 ? 0 : (latestValue - firstValue) / firstValue * 100;
+      historyStatLatest.textContent = `${numberFormatter.format(latestValue)} UZS`;
+      historyStatMin.textContent = `${numberFormatter.format(minimum)} UZS`;
+      historyStatMax.textContent = `${numberFormatter.format(maximum)} UZS`;
+      historyStatAverage.textContent = `${numberFormatter.format(average)} UZS`;
+      historyStatChange.textContent = `${change > 0 ? "+" : ""}${numberFormatter.format(change)}%`;
+      historyStatChange.parentElement.dataset.trend = change > 0 ? "up" : change < 0 ? "down" : "neutral";
+    }
+
+    function clearHistoryStatistics() {
+      [historyStatLatest, historyStatMin, historyStatMax, historyStatAverage, historyStatChange].forEach((stat) => {
+        stat.textContent = "—";
+        stat.parentElement.dataset.trend = "neutral";
+      });
+    }
+
+    function setHistoryViewport(start, end, bounds) {
+      const totalSpan = bounds.end - bounds.start;
+      const minimumSpan = Math.min(totalSpan, 24 * 60 * 60 * 1000);
+      let span = Math.max(minimumSpan, Math.min(totalSpan, end - start));
+      let nextStart = start;
+      let nextEnd = start + span;
+      if (nextStart < bounds.start) {
+        nextStart = bounds.start;
+        nextEnd = nextStart + span;
+      }
+      if (nextEnd > bounds.end) {
+        nextEnd = bounds.end;
+        nextStart = nextEnd - span;
+      }
+      if (span >= totalSpan) {
+        historyViewStart = null;
+        historyViewEnd = null;
+      } else {
+        historyViewStart = nextStart;
+        historyViewEnd = nextEnd;
+      }
+      renderHistoryChart();
+    }
+
+    function getHistoryBounds() {
+      const start = historyFromInput.value;
+      const end = historyToInput.value;
+      return {
+        start: Date.parse(`${start}T00:00:00Z`),
+        end: Date.parse(`${end}T00:00:00Z`) + 24 * 60 * 60 * 1000 - 1
+      };
+    }
+
+    function zoomHistory(factor, anchorRatio = historyPointerRatio) {
+      if (!selectedHistorySeries || !historyFromInput.value || !historyToInput.value) return;
+      const bounds = getHistoryBounds();
+      const currentStart = historyViewStart ?? bounds.start;
+      const currentEnd = historyViewEnd ?? bounds.end;
+      const currentSpan = currentEnd - currentStart;
+      const nextSpan = currentSpan * factor;
+      const anchor = currentStart + currentSpan * Math.min(1, Math.max(0, anchorRatio));
+      setHistoryViewport(anchor - nextSpan * anchorRatio, anchor + nextSpan * (1 - anchorRatio), bounds);
+    }
+
+    function selectHistoryRange(range) {
+      if (!selectedHistorySeries) return;
+      const latestDate = selectedHistorySeries[selectedHistorySeries.length - 1].date;
+      const firstDate = selectedHistorySeries[0].date;
+      const fromDate = new Date(`${latestDate}T00:00:00Z`);
+      const months = { "1m": 1, "3m": 3, "6m": 6, "1y": 12, "3y": 36, "5y": 60, "7y": 84 };
+      if (range === "all") {
+        historyFromInput.value = firstDate;
+      } else {
+        const dayOfMonth = fromDate.getUTCDate();
+        fromDate.setUTCDate(1);
+        fromDate.setUTCMonth(fromDate.getUTCMonth() - months[range]);
+        const daysInTargetMonth = new Date(Date.UTC(fromDate.getUTCFullYear(), fromDate.getUTCMonth() + 1, 0)).getUTCDate();
+        fromDate.setUTCDate(Math.min(dayOfMonth, daysInTargetMonth));
+        const earliest = new Date(`${firstDate}T00:00:00Z`);
+        historyFromInput.value = fromDate < earliest ? firstDate : fromDate.toISOString().slice(0, 10);
+      }
+      historyToInput.value = latestDate;
+      historyViewStart = null;
+      historyViewEnd = null;
+      setActiveHistoryPreset(range);
+      renderHistoryChart();
+    }
+
+    function renderHistoryChart() {
+      const previousSvg = historyChart.querySelector("svg");
+      if (previousSvg) previousSvg.remove();
+      historyTooltip.hidden = true;
+      clearHistoryStatistics();
+      if (!selectedHistorySeries || !selectedHistoryCurrency) return;
+
+      const startDate = historyFromInput.value;
+      const endDate = historyToInput.value;
+      if (!startDate || !endDate || startDate > endDate) {
+        updateHistoryStatus("error", translations[activeLanguage].historyInvalidRange);
+        return;
+      }
+
+      const points = selectedHistorySeries.filter((point) => point.date >= startDate && point.date <= endDate);
+      if (!points.length) {
+        updateHistoryStatus("error", translations[activeLanguage].historyNoData);
+        return;
+      }
+
+      const labels = translations[activeLanguage];
+      const numberFormatter = new Intl.NumberFormat(localeCodes[activeLanguage], { maximumFractionDigits: 2 });
+      updateHistoryStatistics(points, numberFormatter);
+      const width = Math.max(300, Math.round(historyChart.clientWidth));
+      const compactChart = width < 500;
+      const height = Math.max(220, Math.round(historyChart.clientHeight));
+      const padding = compactChart
+        ? { top: 18, right: 12, bottom: 42, left: 58 }
+        : { top: 20, right: 24, bottom: 48, left: 78 };
+      const plotWidth = width - padding.left - padding.right;
+      const plotHeight = height - padding.top - padding.bottom;
+      const bounds = getHistoryBounds();
+      const viewStart = historyViewStart ?? bounds.start;
+      const viewEnd = historyViewEnd ?? bounds.end;
+      updateHistoryScrollbar(bounds, viewStart, viewEnd);
+      const chartPoints = points.filter((point) => {
+        const timestamp = Date.parse(`${point.date}T00:00:00Z`);
+        return timestamp >= viewStart && timestamp <= viewEnd;
+      });
+      if (!chartPoints.length) {
+        updateHistoryStatus("error", labels.historyNoData);
+        return;
+      }
+      updateHistoryStatus("ready", labels.historyPoints.replace("{count}", String(chartPoints.length)));
+      const values = chartPoints.map((point) => point.value);
+      let minimum = Math.min(...values);
+      let maximum = Math.max(...values);
+      if (minimum === maximum) {
+        const margin = Math.max(Math.abs(minimum) * 0.02, 1);
+        minimum -= margin;
+        maximum += margin;
+      }
+      const firstTimestamp = viewStart;
+      const lastTimestamp = viewEnd;
+      const xFor = (point) => padding.left + (lastTimestamp === firstTimestamp
+        ? plotWidth / 2
+        : (Date.parse(`${point.date}T00:00:00Z`) - firstTimestamp) / (lastTimestamp - firstTimestamp) * plotWidth);
+      const yFor = (value) => padding.top + (maximum - value) / (maximum - minimum) * plotHeight;
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+      svg.setAttribute("role", "img");
+      svg.setAttribute("aria-label", labels.historyChartLabel.replace("{code}", selectedHistoryCurrency.code));
+
+      const makeSvgElement = (tag, attributes = {}) => {
+        const element = document.createElementNS("http://www.w3.org/2000/svg", tag);
+        Object.entries(attributes).forEach(([name, value]) => element.setAttribute(name, String(value)));
+        return element;
+      };
+      for (let index = 0; index <= 4; index += 1) {
+        const ratio = index / 4;
+        const y = padding.top + ratio * plotHeight;
+        const value = maximum - ratio * (maximum - minimum);
+        svg.append(makeSvgElement("line", { x1: padding.left, y1: y, x2: width - padding.right, y2: y, class: "chart-grid" }));
+        const yLabel = makeSvgElement("text", { x: padding.left - 10, y: y + 4, "text-anchor": "end" });
+        yLabel.textContent = numberFormatter.format(value);
+        svg.append(yLabel);
+      }
+
+      const dateTickCount = compactChart ? 2 : 4;
+      for (let index = 0; index <= dateTickCount; index += 1) {
+        const ratio = index / dateTickCount;
+        const timestamp = firstTimestamp + ratio * (lastTimestamp - firstTimestamp);
+        const x = padding.left + ratio * plotWidth;
+        const dateLabel = makeSvgElement("text", { x, y: height - 15, "text-anchor": index === 0 ? "start" : index === dateTickCount ? "end" : "middle" });
+        const axisDate = new Date(timestamp);
+        dateLabel.textContent = compactChart
+          ? new Intl.DateTimeFormat(localeCodes[activeLanguage], { month: "short", year: "2-digit", timeZone: "UTC" }).format(axisDate)
+          : formatHistoryDate(axisDate.toISOString().slice(0, 10));
+        svg.append(dateLabel);
+      }
+
+      const pathData = chartPoints.map((point, index) => `${index ? "L" : "M"}${xFor(point).toFixed(2)},${yFor(point.value).toFixed(2)}`).join(" ");
+      const baseline = height - padding.bottom;
+      const area = makeSvgElement("path", {
+        d: `${pathData} L${xFor(chartPoints[chartPoints.length - 1]).toFixed(2)},${baseline} L${xFor(chartPoints[0]).toFixed(2)},${baseline} Z`,
+        class: "chart-area"
+      });
+      const line = makeSvgElement("path", { d: pathData, class: "chart-line" });
+      svg.append(area, line);
+
+      const pointStride = Math.max(1, Math.ceil(chartPoints.length / 160));
+      chartPoints.forEach((point, index) => {
+        if (index % pointStride !== 0 && index !== chartPoints.length - 1) return;
+        const circle = makeSvgElement("circle", { cx: xFor(point), cy: yFor(point.value), r: 3, class: "chart-point" });
+        const title = makeSvgElement("title");
+        title.textContent = `${formatHistoryDate(point.date)} · ${numberFormatter.format(point.value)} UZS`;
+        circle.append(title);
+        svg.append(circle);
+      });
+      const crosshair = makeSvgElement("line", { x1: 0, x2: 0, y1: padding.top, y2: height - padding.bottom, class: "chart-crosshair", visibility: "hidden" });
+      const hoverPoint = makeSvgElement("circle", { cx: 0, cy: 0, r: 5, class: "chart-hover-point", visibility: "hidden" });
+      svg.append(crosshair, hoverPoint);
+      historyChart.insertBefore(svg, historyTooltip);
+      historyTooltip.setAttribute("aria-hidden", "true");
+
+      historyChart.onpointermove = (event) => {
+        if (historyPanState) {
+          const delta = event.clientX - historyPanState.startX;
+          const shift = -delta / svg.getBoundingClientRect().width * (historyPanState.end - historyPanState.start);
+          setHistoryViewport(historyPanState.start + shift, historyPanState.end + shift, bounds);
+          return;
+        }
+        const rect = svg.getBoundingClientRect();
+        const ratio = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
+        historyPointerRatio = Math.min(1, Math.max(0, (ratio * width - padding.left) / plotWidth));
+        const localX = padding.left + historyPointerRatio * plotWidth;
+        const nearest = chartPoints.reduce((best, point) => Math.abs(xFor(point) - localX) < Math.abs(xFor(best) - localX) ? point : best, chartPoints[0]);
+        const pointX = xFor(nearest);
+        crosshair.setAttribute("x1", String(pointX));
+        crosshair.setAttribute("x2", String(pointX));
+        crosshair.setAttribute("visibility", "visible");
+        hoverPoint.setAttribute("cx", String(pointX));
+        hoverPoint.setAttribute("cy", String(yFor(nearest.value)));
+        hoverPoint.setAttribute("visibility", "visible");
+        historyTooltip.hidden = false;
+        historyTooltip.querySelector("strong").textContent = `${numberFormatter.format(nearest.value)} UZS`;
+        historyTooltip.querySelector("span").textContent = formatHistoryDate(nearest.date);
+        const tooltipLeft = event.clientX - rect.left > rect.width * 0.68 ? "auto" : "10px";
+        historyTooltip.style.left = tooltipLeft;
+        historyTooltip.style.right = tooltipLeft === "auto" ? "10px" : "auto";
+      };
+      historyChart.onpointerleave = () => {
+        if (!historyPanState) historyTooltip.hidden = true;
+      };
+      historyChart.onpointerdown = (event) => {
+        if (event.button !== 0 || !historyViewStart) return;
+        historyPanState = { startX: event.clientX, start: historyViewStart, end: historyViewEnd };
+        historyChart.classList.add("is-panning");
+        historyChart.setPointerCapture(event.pointerId);
+      };
+      historyChart.onpointerup = (event) => {
+        historyPanState = null;
+        historyChart.classList.remove("is-panning");
+        if (historyChart.hasPointerCapture(event.pointerId)) historyChart.releasePointerCapture(event.pointerId);
+      };
+      historyChart.onpointercancel = () => {
+        historyPanState = null;
+        historyChart.classList.remove("is-panning");
+      };
+      historyChart.onwheel = (event) => {
+        event.preventDefault();
+        zoomHistory(event.deltaY < 0 ? 0.8 : 1.25);
+      };
+      renderedHistoryWidth = width;
+      renderedHistoryHeight = height;
+    }
+
+    async function openCurrencyHistory(currency) {
+      selectedHistoryCurrency = currency;
+      selectedHistorySeries = historyCache.get(currency.code) || null;
+      historyTitle.textContent = `${translations[activeLanguage].historyTitle} · ${currency.code}`;
+      historySubtitle.textContent = `${countryName(currency)} · ${currencyName(currency)}`;
+      const previousSvg = historyChart.querySelector("svg");
+      if (previousSvg) previousSvg.remove();
+      historyTooltip.hidden = true;
+      historyFromInput.disabled = true;
+      historyToInput.disabled = true;
+      updateHistoryStatus("loading", translations[activeLanguage].historyLoading);
+      historyDialog.classList.remove("is-closing");
+      window.clearTimeout(historyCloseTimer);
+      historyDialog.showModal();
+      historyDialog.scrollTop = 0;
+      historyDialog.scrollLeft = 0;
+      const requestId = ++historyRequestId;
+
+      if (selectedHistorySeries) {
+        configureHistoryDates(selectedHistorySeries);
+        historyFromInput.focus();
+        return;
+      }
+
+      const controller = new AbortController();
+      historyRequestController = controller;
+      const timeoutId = window.setTimeout(() => controller.abort(), 15000);
+      try {
+        const url = `https://cbu.uz/common/json/amcharts.php?rate=${encodeURIComponent(currency.code)}`;
+        const response = await fetch(url, { cache: "no-store", signal: controller.signal });
+        if (!response.ok) throw new Error(`CBU history returned HTTP ${response.status}`);
+        const data = await response.json();
+        if (!Array.isArray(data)) throw new Error("CBU history response is not a data list");
+        const series = data.map((item) => ({
+          date: typeof item.date === "string" ? item.date : "",
+          value: Number(item.value)
+        }));
+        const hasInvalidPoint = series.some((point) => {
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(point.date) || !Number.isFinite(point.value) || point.value <= 0) return true;
+          const timestamp = Date.parse(`${point.date}T00:00:00Z`);
+          return !Number.isFinite(timestamp) || new Date(timestamp).toISOString().slice(0, 10) !== point.date;
+        });
+        if (hasInvalidPoint) throw new Error("CBU history contains an invalid date or rate");
+        series.sort((left, right) => left.date.localeCompare(right.date));
+        if (!series.length) throw new Error("CBU history contains no valid data points");
+        historyCache.set(currency.code, series);
+        if (!historyDialog.open || requestId !== historyRequestId) return;
+        selectedHistorySeries = series;
+        configureHistoryDates(series);
+        historyFromInput.focus();
+      } catch (error) {
+        if (controller.signal.aborted && !historyDialog.open) return;
+        console.error(`Could not load CBU history for ${currency.code}:`, error);
+        if (historyDialog.open && requestId === historyRequestId) {
+          const svg = historyChart.querySelector("svg");
+          if (svg) svg.remove();
+          clearHistoryStatistics();
+          updateHistoryStatus("error", translations[activeLanguage].historyError);
+        }
+      } finally {
+        window.clearTimeout(timeoutId);
+        if (historyRequestController === controller) historyRequestController = null;
+      }
+    }
+
+    function updateConversion() {
+      const amount = Number(amountInput.value);
+      const from = currencies.find((currency) => currency.code === fromSelect.value);
+      const to = currencies.find((currency) => currency.code === toSelect.value);
+      const labels = translations[activeLanguage];
+
+      if (amountInput.value.trim() === "" || !Number.isFinite(amount) || amount < 0 || !from || !to) {
+        result.textContent = labels.invalidAmount;
+        rateLine.textContent = "";
+        return;
+      }
+      if (from.rate === null || to.rate === null) {
+        result.textContent = labels.noRate;
+        rateLine.textContent = "";
+        return;
+      }
+
+      const converted = amount * from.rate / to.rate;
+      const rate = from.rate / to.rate;
+      result.textContent = `${formatNumber(converted, { maximumFractionDigits: 2 })} ${to.code}`;
+      rateLine.textContent = `1 ${from.code} = ${formatNumber(rate, { maximumSignificantDigits: 8 })} ${to.code}`;
+    }
+
+    function setLanguage(language) {
+      if (!translations[language]) return;
+      activeLanguage = language;
+      savePreference("convertion-language", language);
+      document.documentElement.lang = language;
+      document.title = `${translations[language].pageTitle} — Convertion.uz`;
+      document.querySelectorAll("[data-i18n]").forEach((element) => {
+        const key = element.dataset.i18n;
+        if (translations[language][key]) element.textContent = translations[language][key];
+      });
+      document.querySelectorAll("[data-i18n-aria]").forEach((element) => {
+        const key = element.dataset.i18nAria;
+        if (translations[language][key]) element.setAttribute("aria-label", translations[language][key]);
+      });
+      document.querySelectorAll("[data-i18n-title]").forEach((element) => {
+        const key = element.dataset.i18nTitle;
+        if (translations[language][key]) element.title = translations[language][key];
+      });
+      languageSelect.value = language;
+      languageSelect.setAttribute("aria-label", translations[language].languageLabel);
+      fromSelect.setAttribute("aria-label", language === "ru" ? "Исходная валюта" : language === "uz" ? "Boshlang'ich valyuta" : "Source currency");
+      toSelect.setAttribute("aria-label", language === "ru" ? "Целевая валюта" : language === "uz" ? "Maqsadli valyuta" : "Target currency");
+      document.querySelector("#swap").title = language === "ru" ? "Поменять валюты местами" : language === "uz" ? "Valyutalarni almashtirish" : "Swap currencies";
+      document.querySelector("#swap").setAttribute("aria-label", document.querySelector("#swap").title);
+      buildOptions();
+      updateRateControls();
+      renderRateCards();
+      updateRateStatus();
+      updateConversion();
+      applyTheme(document.documentElement.dataset.theme === "light" ? "light" : "dark");
+      if (historyDialog.open && selectedHistoryCurrency) {
+        historyTitle.textContent = `${translations[language].historyTitle} · ${selectedHistoryCurrency.code}`;
+        historySubtitle.textContent = `${countryName(selectedHistoryCurrency)} · ${currencyName(selectedHistoryCurrency)}`;
+        if (historyStatus.dataset.state === "loading") {
+          updateHistoryStatus("loading", translations[language].historyLoading);
+        } else if (historyStatus.dataset.state === "error" && !selectedHistorySeries) {
+          updateHistoryStatus("error", translations[language].historyError);
+        } else {
+          renderHistoryChart();
+        }
+      }
+    }
+
+    async function loadOfficialRates() {
+      if (rateRequestInProgress) return;
+      rateRequestInProgress = true;
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(() => controller.abort(), 12000);
+      try {
+        const response = await fetch(apiUrl, { cache: "no-store", signal: controller.signal });
+        if (!response.ok) throw new Error(`CBU returned HTTP ${response.status}`);
+        const data = await response.json();
+        if (!Array.isArray(data)) throw new Error("CBU response is not a currency list");
+
+        const seenCodes = new Set();
+        const bankCurrencies = data.filter((item) => item.Ccy !== "UZS").map((item) => {
+          const code = typeof item.Ccy === "string" ? item.Ccy.trim().toUpperCase() : "";
+          const nominal = Number(item.Nominal);
+          const rate = Number(item.Rate);
+          if (!code || seenCodes.has(code) || !Number.isFinite(rate) || rate <= 0 || !Number.isFinite(nominal) || nominal <= 0) {
+            throw new Error("CBU response contains an invalid or duplicate currency rate");
+          }
+          seenCodes.add(code);
+          const metadata = currencyMetadata[code];
+          const flag = metadata ? metadata[0] : "🌐";
+          return {
+            code,
+            flag,
+            symbol: metadata ? metadata[1] : code,
+            nominal,
+            rate: rate / nominal,
+            region: countryFlagCode(flag)?.toUpperCase() || null,
+            names: {
+              ru: item.CcyNm_RU || code,
+              uz: item.CcyNm_UZ || item.CcyNm_RU || code,
+              en: item.CcyNm_EN || item.CcyNm_RU || code
+            }
+          };
+        });
+        if (!bankCurrencies.length) throw new Error("CBU response contains no currencies");
+
+        const selectedFrom = fromSelect.value;
+        const selectedTo = toSelect.value;
+        currencies = [uzsCurrency, ...bankCurrencies];
+        buildOptions();
+        fromSelect.value = currencies.some(({ code }) => code === selectedFrom) ? selectedFrom : "USD";
+        toSelect.value = currencies.some(({ code }) => code === selectedTo) ? selectedTo : "UZS";
+        officialRateDate = data.find((item) => item.Date)?.Date || null;
+        rateLoadFailed = false;
+        renderRateCards();
+        updateConversion();
+        updateRateStatus();
+      } catch (error) {
+        console.error("Could not load official CBU exchange rates:", error);
+        rateLoadFailed = true;
+        updateRateStatus();
+        updatedLine.setAttribute("role", "status");
+        updateConversion();
+      } finally {
+        window.clearTimeout(timeoutId);
+        rateRequestInProgress = false;
+      }
+    }
+
+    buildOptions();
+    fromSelect.value = "USD";
+    toSelect.value = "UZS";
+    setLanguage(activeLanguage);
+
+    [amountInput, fromSelect, toSelect].forEach((element) => {
+      element.addEventListener("input", updateConversion);
+      element.addEventListener("change", updateConversion);
+    });
+
+    document.querySelectorAll(".number-stepper button").forEach((button) => {
+      button.addEventListener("click", () => {
+        const input = button.closest(".number-control").querySelector('input[type="number"]');
+        const stepValue = input.step === "any" ? 1 : Number(input.step);
+        const currentValue = input.value === "" ? 0 : Number(input.value);
+        const direction = button.dataset.step === "up" ? 1 : -1;
+        const minimum = input.min === "" ? -Infinity : Number(input.min);
+        const maximum = input.max === "" ? Infinity : Number(input.max);
+        const nextValue = Math.min(maximum, Math.max(minimum, currentValue + direction * stepValue));
+        input.value = String(Number(nextValue.toPrecision(12)));
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+        input.focus();
+      });
+    });
+
+    const swapButton = document.querySelector("#swap");
+    swapButton.addEventListener("click", () => {
+      const previousFrom = fromSelect.value;
+      fromSelect.value = toSelect.value;
+      toSelect.value = previousFrom;
+      swapButton.classList.remove("is-swapping");
+      void swapButton.offsetWidth;
+      swapButton.classList.add("is-swapping");
+      window.setTimeout(() => swapButton.classList.remove("is-swapping"), 280);
+      updateConversion();
+    });
+
+    languageSelect.addEventListener("change", () => setLanguage(languageSelect.value));
+
+    rateSearch.addEventListener("input", () => {
+      showAllRates = false;
+      ratesGrid.classList.remove("is-animated");
+      ratesGrid.style.maxHeight = "";
+      ratesGrid.style.overflow = "";
+      renderRateCards();
+    });
+    rateAmountInput.addEventListener("input", renderRateCards);
+    ratesMoreButton.addEventListener("click", () => setRatesExpanded(!showAllRates));
+    rateViewToggle.addEventListener("change", () => {
+      showReverseRates = rateViewToggle.checked;
+      updateRateControls();
+      renderRateCards();
+    });
+    [historyFromInput, historyToInput].forEach((input) => {
+      const onDateChange = () => {
+        historyViewStart = null;
+        historyViewEnd = null;
+        setActiveHistoryPreset(null);
+        renderHistoryChart();
+      };
+      input.addEventListener("input", onDateChange);
+      input.addEventListener("change", onDateChange);
+    });
+    document.querySelectorAll("[data-history-range]").forEach((button) => {
+      button.addEventListener("click", () => selectHistoryRange(button.dataset.historyRange));
+    });
+    document.querySelector("#history-zoom-in").addEventListener("click", () => zoomHistory(0.7));
+    document.querySelector("#history-zoom-out").addEventListener("click", () => zoomHistory(1.4));
+    document.querySelector("#history-zoom-reset").addEventListener("click", () => {
+      historyViewStart = null;
+      historyViewEnd = null;
+      renderHistoryChart();
+    });
+    historyScrollTrack.addEventListener("pointerdown", (event) => {
+      if (historyScrollTrack.getAttribute("aria-disabled") === "true") return;
+      const bounds = getHistoryBounds();
+      const viewSpan = historyViewEnd - historyViewStart;
+      const trackRect = historyScrollTrack.getBoundingClientRect();
+      const thumbRect = historyScrollThumb.getBoundingClientRect();
+      const clickedThumb = event.target === historyScrollThumb;
+      historyScrollbarDrag = {
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        initialStart: historyViewStart,
+        viewSpan,
+        bounds,
+        trackWidth: trackRect.width,
+        thumbWidth: thumbRect.width,
+        clickedThumb
+      };
+      historyScrollTrack.setPointerCapture(event.pointerId);
+      if (!clickedThumb) {
+        const ratio = (event.clientX - trackRect.left) / trackRect.width;
+        moveHistoryScrollbarTo(ratio, bounds, viewSpan);
+        historyScrollbarDrag.initialStart = historyViewStart;
+        historyScrollbarDrag.startX = event.clientX;
+      }
+    });
+    historyScrollTrack.addEventListener("pointermove", (event) => {
+      if (!historyScrollbarDrag || historyScrollbarDrag.pointerId !== event.pointerId) return;
+      const { bounds, viewSpan, initialStart, trackWidth, thumbWidth, startX } = historyScrollbarDrag;
+      const maxStart = bounds.end - bounds.start - viewSpan;
+      const usableTrackWidth = Math.max(1, trackWidth - thumbWidth);
+      const shift = (event.clientX - startX) / usableTrackWidth * maxStart;
+      const ratio = maxStart > 0 ? (initialStart - bounds.start + shift) / maxStart : 0;
+      moveHistoryScrollbarTo(ratio, bounds, viewSpan);
+    });
+    const stopHistoryScrollbarDrag = (event) => {
+      if (!historyScrollbarDrag || historyScrollbarDrag.pointerId !== event.pointerId) return;
+      historyScrollbarDrag = null;
+      if (historyScrollTrack.hasPointerCapture(event.pointerId)) historyScrollTrack.releasePointerCapture(event.pointerId);
+    };
+    historyScrollTrack.addEventListener("pointerup", stopHistoryScrollbarDrag);
+    historyScrollTrack.addEventListener("pointercancel", stopHistoryScrollbarDrag);
+    historyScrollTrack.addEventListener("keydown", (event) => {
+      if (historyScrollTrack.getAttribute("aria-disabled") === "true") return;
+      const bounds = getHistoryBounds();
+      const viewSpan = historyViewEnd - historyViewStart;
+      const currentRatio = (historyViewStart - bounds.start) / (bounds.end - bounds.start - viewSpan);
+      const shifts = {
+        ArrowLeft: -0.05, ArrowRight: 0.05, PageUp: -0.25, PageDown: 0.25,
+        Home: -currentRatio, End: 1 - currentRatio
+      };
+      if (!(event.key in shifts)) return;
+      event.preventDefault();
+      moveHistoryScrollbarTo(currentRatio + shifts[event.key], bounds, viewSpan);
+    });
+    const closeHistoryDialog = () => {
+      if (!historyDialog.open || historyDialog.classList.contains("is-closing")) return;
+      historyDialog.classList.add("is-closing");
+      historyCloseTimer = window.setTimeout(() => {
+        if (historyDialog.open) historyDialog.close();
+      }, 220);
+    };
+    window.addEventListener("resize", () => {
+      if (historyDialog.open) renderHistoryChart();
+    });
+    if ("ResizeObserver" in window) {
+      const historyResizeObserver = new ResizeObserver(() => {
+        const width = Math.round(historyChart.clientWidth);
+        const height = Math.round(historyChart.clientHeight);
+        if (historyDialog.open && selectedHistorySeries && (width !== renderedHistoryWidth || height !== renderedHistoryHeight)) renderHistoryChart();
+      });
+      historyResizeObserver.observe(historyChart);
+    }
+    document.querySelector("#history-close").addEventListener("click", closeHistoryDialog);
+    historyDialog.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeHistoryDialog();
+      }
+    });
+    historyDialog.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      closeHistoryDialog();
+    });
+    historyDialog.addEventListener("click", (event) => {
+      if (event.target === historyDialog) closeHistoryDialog();
+    });
+    historyDialog.addEventListener("close", () => {
+      window.clearTimeout(historyCloseTimer);
+      historyDialog.classList.remove("is-closing");
+      historyRequestId += 1;
+      if (historyRequestController) {
+        historyRequestController.abort();
+        historyRequestController = null;
+      }
+    });
+
+    themeToggle.addEventListener("change", () => {
+      const theme = themeToggle.checked ? "light" : "dark";
+      applyTheme(theme);
+      savePreference("convertion-theme", theme);
+    });
+
+    loadOfficialRates();
+    window.setInterval(() => {
+      if (document.visibilityState === "visible") loadOfficialRates();
+    }, 30 * 60 * 1000);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") loadOfficialRates();
+    });
+  </script>
+</body>
+</html>
