@@ -1007,7 +1007,7 @@
         bankRatesKicker: "КУРСЫ БАНКОВ", bankRatesTitle: "Курсы коммерческих банков",
         bankSelectLabel: "Выберите банк", bankSelectLoading: "Загрузка списка банков…",
         bankSelectPlaceholder: "Выберите банк", bankCurrency: "Валюта", bankBuy: "Покупка", bankSell: "Продажа",
-        bankRatesLoading: "Загружаем курсы банков…", bankRatesError: "Не удалось загрузить курсы банков. Попробуйте позже.",
+        bankRatesLoading: "Загружаем курсы банков…", bankRatesError: "Не удалось загрузить или обновить курсы банков. Данные могут быть устаревшими.",
         bankRatesSource: "Источник: Bank.uz", bankRatesUpdated: "Получено",
         bankRatesDisclaimer: "Курсы покупки и продажи предоставляет Bank.uz; перед обменом уточняйте курс в банке.",
         ratesNote: "Сумма в валюте → UZS", reverseRatesNote: "Сумма в UZS → валюта",
@@ -1044,7 +1044,7 @@
         bankRatesKicker: "BANK KURSLARI", bankRatesTitle: "Tijorat banklari valyuta kurslari",
         bankSelectLabel: "Bankni tanlang", bankSelectLoading: "Banklar ro'yxati yuklanmoqda…",
         bankSelectPlaceholder: "Bankni tanlang", bankCurrency: "Valyuta", bankBuy: "Sotib olish", bankSell: "Sotish",
-        bankRatesLoading: "Bank kurslari yuklanmoqda…", bankRatesError: "Bank kurslarini yuklab bo'lmadi. Keyinroq urinib ko'ring.",
+        bankRatesLoading: "Bank kurslari yuklanmoqda…", bankRatesError: "Bank kurslarini yuklab yoki yangilab bo'lmadi. Ma'lumotlar eskirgan bo'lishi mumkin.",
         bankRatesSource: "Manba: Bank.uz", bankRatesUpdated: "Yuklandi",
         bankRatesDisclaimer: "Sotib olish va sotish kurslari Bank.uz tomonidan taqdim etilgan; almashtirishdan oldin bankdan aniqlashtiring.",
         ratesNote: "Valyuta miqdori → UZS", reverseRatesNote: "UZS miqdori → valyuta",
@@ -1081,7 +1081,7 @@
         bankRatesKicker: "BANK RATES", bankRatesTitle: "Commercial bank exchange rates",
         bankSelectLabel: "Select a bank", bankSelectLoading: "Loading bank list…",
         bankSelectPlaceholder: "Select a bank", bankCurrency: "Currency", bankBuy: "Buy", bankSell: "Sell",
-        bankRatesLoading: "Loading bank rates…", bankRatesError: "Could not load bank rates. Please try again later.",
+        bankRatesLoading: "Loading bank rates…", bankRatesError: "Could not load or refresh bank rates. The displayed data may be stale.",
         bankRatesSource: "Source: Bank.uz", bankRatesUpdated: "Fetched",
         bankRatesDisclaimer: "Buy and sell rates are provided by Bank.uz; confirm the rate with the bank before exchanging.",
         ratesNote: "Currency amount → UZS", reverseRatesNote: "UZS amount → currency",
@@ -1869,7 +1869,10 @@
       historyRequestController = controller;
       const timeoutId = window.setTimeout(() => controller.abort(), 15000);
       try {
-        const url = `https://cbu.uz/common/json/amcharts.php?rate=${encodeURIComponent(currency.code)}`;
+        const historyEndpoint = window.location.protocol === "file:"
+          ? "https://cbu.uz/common/json/amcharts.php"
+          : "/api/history";
+        const url = `${historyEndpoint}?rate=${encodeURIComponent(currency.code)}`;
         const response = await fetch(url, { cache: "no-store", signal: controller.signal });
         if (!response.ok) throw new Error(`CBU history returned HTTP ${response.status}`);
         const data = await response.json();
