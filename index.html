@@ -291,7 +291,33 @@
     .rate-line { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
     .updated-line { margin: 8px 0 0; color: var(--muted); font-size: 12px; }
 
-    .rates-section { margin-top: 76px; }
+    .rates-tabs {
+      display: flex;
+      gap: 8px;
+      margin: 76px 0 24px;
+      padding: 5px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface);
+    }
+    .rates-tab {
+      min-height: 42px;
+      flex: 1 1 0;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      transition: background .18s ease, color .18s ease, box-shadow .18s ease;
+    }
+    .rates-tab[aria-selected="true"] { background: var(--accent-soft); color: var(--accent-strong); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 25%, transparent); }
+    .rates-tab:hover:not([aria-selected="true"]) { background: var(--surface-soft); color: var(--text); }
+    .rates-tab:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 3px; }
+    .rates-tabs ~ .commercial-rates-section { margin-top: 0; }
     .section-heading { display: flex; justify-content: space-between; align-items: center; gap: 18px; margin-bottom: 18px; }
     .section-kicker { color: var(--accent); font-size: 11px; font-weight: 750; letter-spacing: .13em; }
     .section-heading h2 { margin: 5px 0 0; font-size: 25px; letter-spacing: -.04em; white-space: nowrap; }
@@ -676,7 +702,8 @@
       .currency-row { grid-template-columns: 1fr 42px 1fr; gap: 7px; }
       .currency-select { padding: 0 34px 0 8px; font-size: 13px; }
       .swap-button { width: 36px; height: 36px; margin-bottom: 5px; border-radius: 11px; font-size: 17px; }
-      .rates-section { margin-top: 56px; }
+      .rates-tabs { gap: 5px; margin: 56px 0 20px; }
+      .rates-tab { min-height: 40px; padding: 0 8px; font-size: 12px; }
       .section-heading { align-items: flex-start; flex-direction: column; gap: 6px; }
       .section-heading h2 { white-space: normal; }
       .rate-tools { width: 100%; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 10px 14px; }
@@ -817,7 +844,11 @@
         </div>
       </section>
 
-      <section class="rates-section" id="rates" aria-labelledby="rates-title">
+      <div class="rates-tabs" role="tablist" aria-label="Разделы курсов валют" data-i18n-aria="ratesTabsLabel">
+        <button class="rates-tab" id="rates-tab" type="button" role="tab" aria-selected="true" aria-controls="rates" tabindex="0" data-i18n="worldCurrenciesTab">Мировые валюты</button>
+        <button class="rates-tab" id="bank-rates-tab" type="button" role="tab" aria-selected="false" aria-controls="bank-rates" tabindex="-1" data-i18n="bankRatesTab">Курсы коммерческих банков</button>
+      </div>
+      <section class="rates-section" id="rates" role="tabpanel" tabindex="0" aria-labelledby="rates-tab">
         <div class="section-heading">
           <div>
             <div class="section-kicker" data-i18n="currencies">МИРОВЫЕ ВАЛЮТЫ</div>
@@ -854,7 +885,7 @@
         <p class="rate-empty" id="rate-empty" hidden data-i18n="noRatesFound">Ничего не найдено</p>
       </section>
 
-      <section class="commercial-rates-section" id="bank-rates" aria-labelledby="bank-rates-title">
+      <section class="commercial-rates-section" id="bank-rates" role="tabpanel" tabindex="0" aria-labelledby="bank-rates-tab" hidden>
         <div class="section-heading">
           <div>
             <div class="section-kicker" data-i18n="bankRatesKicker">КУРСЫ БАНКОВ</div>
@@ -1005,6 +1036,7 @@
         calculator: "Калькулятор валют", autoCalc: "Автоматический расчет", amount: "Сумма", from: "Из", to: "В",
         result: "Результат", currencies: "МИРОВЫЕ ВАЛЮТЫ", ratesTitle: "Текущие курсы валют",
         bankRatesKicker: "КУРСЫ БАНКОВ", bankRatesTitle: "Курсы коммерческих банков",
+        worldCurrenciesTab: "Мировые валюты", bankRatesTab: "Курсы коммерческих банков", ratesTabsLabel: "Разделы курсов валют",
         bankSelectLabel: "Выберите банк", bankSelectLoading: "Загрузка списка банков…",
         bankSelectPlaceholder: "Выберите банк", bankCurrency: "Валюта", bankBuy: "Покупка", bankSell: "Продажа",
         bankRatesLoading: "Загружаем курсы банков…", bankRatesError: "Не удалось загрузить или обновить курсы банков. Данные могут быть устаревшими.",
@@ -1042,6 +1074,7 @@
         calculator: "Valyuta kalkulyatori", autoCalc: "Avtomatik hisob-kitob", amount: "Miqdor", from: "Dan", to: "Ga",
         result: "Natija", currencies: "JAHON VALYUTALARI", ratesTitle: "Joriy valyuta kurslari",
         bankRatesKicker: "BANK KURSLARI", bankRatesTitle: "Tijorat banklari valyuta kurslari",
+        worldCurrenciesTab: "Jahon valyutalari", bankRatesTab: "Tijorat banklari kurslari", ratesTabsLabel: "Valyuta kurslari bo'limlari",
         bankSelectLabel: "Bankni tanlang", bankSelectLoading: "Banklar ro'yxati yuklanmoqda…",
         bankSelectPlaceholder: "Bankni tanlang", bankCurrency: "Valyuta", bankBuy: "Sotib olish", bankSell: "Sotish",
         bankRatesLoading: "Bank kurslari yuklanmoqda…", bankRatesError: "Bank kurslarini yuklab yoki yangilab bo'lmadi. Ma'lumotlar eskirgan bo'lishi mumkin.",
@@ -1079,6 +1112,7 @@
         calculator: "Currency calculator", autoCalc: "Automatic calculation", amount: "Amount", from: "From", to: "To",
         result: "Result", currencies: "WORLD CURRENCIES", ratesTitle: "Current exchange rates",
         bankRatesKicker: "BANK RATES", bankRatesTitle: "Commercial bank exchange rates",
+        worldCurrenciesTab: "World currencies", bankRatesTab: "Commercial bank rates", ratesTabsLabel: "Exchange rate sections",
         bankSelectLabel: "Select a bank", bankSelectLoading: "Loading bank list…",
         bankSelectPlaceholder: "Select a bank", bankCurrency: "Currency", bankBuy: "Buy", bankSell: "Sell",
         bankRatesLoading: "Loading bank rates…", bankRatesError: "Could not load or refresh bank rates. The displayed data may be stale.",
@@ -1131,7 +1165,9 @@
     }
 
     const apiUrl = "https://cbu.uz/ru/arkhiv-kursov-valyut/json/";
-    const bankRatesApiUrl = "https://bank.uz/uz/currency";
+    const bankRatesApiUrl = window.location.protocol === "file:"
+      ? "https://bank.uz/uz/currency"
+      : "/api/bank-rates";
     const commercialRateCodes = ["USD", "RUB", "EUR", "GBP", "KZT"];
     const amountInput = document.querySelector("#amount");
     const fromSelect = document.querySelector("#from-currency");
@@ -1150,6 +1186,8 @@
     const bankSelect = document.querySelector("#bank-select");
     const bankRatesBody = document.querySelector("#bank-rates-body");
     const bankRatesStatus = document.querySelector("#bank-rates-status");
+    const ratesTabButtons = [...document.querySelectorAll(".rates-tab")];
+    const ratesTabPanels = ratesTabButtons.map((button) => document.getElementById(button.getAttribute("aria-controls")));
     const historyDialog = document.querySelector("#history-dialog");
     const historyTitle = document.querySelector("#history-title");
     const historySubtitle = document.querySelector("#history-subtitle");
@@ -1558,6 +1596,16 @@
         button.classList.toggle("is-active", active);
         button.setAttribute("aria-pressed", String(active));
       });
+    }
+
+    function activateRatesTab(index, moveFocus = false) {
+      ratesTabButtons.forEach((button, tabIndex) => {
+        const active = tabIndex === index;
+        button.setAttribute("aria-selected", String(active));
+        button.tabIndex = active ? 0 : -1;
+        ratesTabPanels[tabIndex].hidden = !active;
+      });
+      if (moveFocus) ratesTabButtons[index].focus();
     }
 
     function parseCbuDate(value) {
@@ -2162,6 +2210,19 @@
 
     languageSelect.addEventListener("change", () => setLanguage(languageSelect.value));
     bankSelect.addEventListener("change", renderCommercialBankRates);
+    ratesTabButtons.forEach((button, index) => {
+      button.addEventListener("click", () => activateRatesTab(index));
+      button.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+          event.preventDefault();
+          const direction = event.key === "ArrowRight" ? 1 : -1;
+          activateRatesTab(index + direction, true);
+        } else if (event.key === "Home" || event.key === "End") {
+          event.preventDefault();
+          activateRatesTab(event.key === "Home" ? 0 : ratesTabButtons.length - 1, true);
+        }
+      });
+    });
 
     rateSearch.addEventListener("input", () => {
       showAllRates = false;
