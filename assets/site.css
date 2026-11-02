@@ -251,14 +251,14 @@
     .convertion-card {
       max-width: 100%;
       margin: 0 auto;
-      padding: 30px;
+      padding: 17px;
       border: 1px solid var(--line);
       border-radius: 18px;
       background: var(--surface);
       box-shadow: var(--shadow);
     }
 
-    .card-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+    .card-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 6px; }
     .card-heading h2 { margin: 0; font-size: 20px; letter-spacing: -.03em; }
     .live-badge { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; }
     .live-badge .live-dot { width: 7px; height: 7px; flex: 0 0 7px; border-radius: 50%; background: #65b384; }
