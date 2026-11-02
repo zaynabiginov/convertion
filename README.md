@@ -64,3 +64,38 @@ Open **Commercial bank rates** to view buy and sell quotes provided by Bank.uz. 
 - If a loading error or **Rate unavailable** message appears, check your internet connection, reload the page, and try again later. A data provider may also be temporarily unavailable.
 - If the bank table is empty, clear the search and filters, select **All currencies**, and check the minimum and maximum price limits.
 - If the history chart does not load, try again later or select a wider date range.
+
+## 8. How the website works
+
+1. The browser loads `index.html`, then applies the styles from `css/site.css` and runs `js/app.js`.
+2. The JavaScript requests the current currency list from the Central Bank of Uzbekistan. It validates the response, normalizes rates by their published nominal values, and uses the resulting rates for the converter and currency cards. UZS is the calculation baseline.
+3. For a conversion, the site calculates `amount × source rate ÷ target rate`. Changing the amount or either currency recalculates the result immediately.
+4. Commercial bank quotes are requested from `/api/bank-rates`. The server-side handler in `api/bank-rates.js` retrieves the Bank.uz page; the browser parses its quotes and applies the selected search, filters, and sorting.
+5. When a currency card is opened, the browser loads that currency's saved history from `data/history/<CODE>.json`, validates and sorts the points, then draws the chart and period statistics. The loaded series is cached in memory while the page remains open.
+6. Language and theme preferences are stored in the browser's local storage. Rates are refreshed when the page becomes visible and at regular intervals while it remains open.
+
+The two history handlers in `api/cbu-history.js` and `api/history.js` provide server-side ways to retrieve history from the Central Bank. The current browser interface loads the prepared JSON files in `data/history/` directly.
+
+## 9. Project structure
+
+```text
+convertion/
+├── index.html             # Page structure and interface elements
+├── README.md              # English user guide and project overview
+├── READMEru.md            # Russian user guide and project overview
+├── READMEuz.md            # Uzbek user guide and project overview
+├── api/
+│   ├── bank-rates.js      # Server-side Bank.uz quotes handler
+│   ├── cbu-history.js     # Server-side Central Bank history handler
+│   └── history.js         # Alternative Central Bank history handler
+├── assets/
+│   └── favicon.svg        # Browser tab icon
+├── css/
+│   └── site.css           # Layout, responsive rules, and themes
+├── data/
+│   └── history/           # Historical rate series, one JSON file per currency
+└── js/
+    └── app.js             # UI behavior, translations, conversion, and data loading
+```
+
+`api/` contains server-side request handlers and requires a hosting platform that supports them. `data/history/` contains the prepared history files used by the current interface; file names are currency codes, for example `USD.json`. Add or update a history series there using the same JSON structure: an array of objects with a `date` (`YYYY-MM-DD`) and a positive numeric `value`.

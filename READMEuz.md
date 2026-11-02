@@ -64,3 +64,38 @@ Statistikada so‘nggi qiymat, minimum, maksimum, o‘rtacha qiymat va tanlangan
 - **Kurs mavjud emas** yoki yuklash xatosi ko‘rinsa, internet aloqasini tekshiring, sahifani qayta yuklang va birozdan keyin yana urinib ko‘ring. Markaziy bank yoki Bank.uz xizmati vaqtincha ishlamayotgan bo‘lishi ham mumkin.
 - Bank jadvali bo‘sh bo‘lsa, qidiruv va filtrlarni tozalang, valyutani **Barcha valyutalar** holatiga qaytaring va minimal/maksimal narx chegaralarini tekshiring.
 - Tarixiy grafik ochilmasa, birozdan keyin qayta urinib ko‘ring yoki sanalarni kengroq davrga o‘zgartiring.
+
+## 8. Sayt qanday ishlaydi
+
+1. Brauzer `index.html` faylini yuklaydi, so‘ng `css/site.css` uslublarini qo‘llaydi va `js/app.js` skriptini ishga tushiradi.
+2. JavaScript O‘zbekiston Markaziy bankidan joriy valyuta kurslarini so‘raydi. Javob tekshiriladi va kurslar e’lon qilingan nominalga bo‘linib normallashtiriladi. Konvertor va valyuta kartochkalari shu ma’lumotlardan foydalanadi; hisoblashning asosiy valyutasi — UZS.
+3. Konvertatsiya `summa × boshlang‘ich valyuta kursi ÷ maqsadli valyuta kursi` formulasi bilan hisoblanadi. Summa yoki valyuta o‘zgarsa, natija avtomatik yangilanadi.
+4. Tijorat banklari takliflari `/api/bank-rates` manzilidan olinadi. `api/bank-rates.js` server ishlov beruvchisi Bank.uz sahifasini yuklaydi; brauzer undan kurslarni ajratib olib, tanlangan qidiruv, filtr va saralashni qo‘llaydi.
+5. Valyuta kartochkasi ochilganda, brauzer uning saqlangan tarixini `data/history/<KOD>.json` faylidan yuklaydi, nuqtalarni tekshiradi va saralaydi, so‘ng grafik hamda davr statistikasini chizadi. Yuklangan qator sahifa ochiq turgan vaqt davomida xotirada saqlanadi.
+6. Til va mavzu sozlamalari brauzerning mahalliy xotirasida saqlanadi. Sahifaga qaytilganda va sahifa ko‘rinib turgan paytda muntazam ravishda kurslar yangilanadi.
+
+`api/cbu-history.js` va `api/history.js` ishlov beruvchilari Markaziy bankdan tarixiy ma’lumotlarni server orqali olish imkonini beradi. Hozirgi brauzer interfeysi esa tayyor JSON fayllarini bevosita `data/history/` ichidan yuklaydi.
+
+## 9. Loyiha papkalari va fayllari
+
+```text
+convertion/
+├── index.html             # Sahifa tuzilishi va interfeys elementlari
+├── README.md              # Ingliz tilidagi yo‘riqnoma va loyiha tavsifi
+├── READMEru.md            # Rus tilidagi yo‘riqnoma va loyiha tavsifi
+├── READMEuz.md            # O‘zbek tilidagi yo‘riqnoma va loyiha tavsifi
+├── api/
+│   ├── bank-rates.js      # Bank.uz kurslari uchun server ishlov beruvchisi
+│   ├── cbu-history.js     # Markaziy bank tarixi uchun server ishlov beruvchisi
+│   └── history.js         # Markaziy bank tarixi uchun muqobil ishlov beruvchi
+├── assets/
+│   └── favicon.svg        # Brauzer oynasidagi sayt belgisi
+├── css/
+│   └── site.css           # Uslublar, moslashuvchan maket va mavzular
+├── data/
+│   └── history/           # Tarixiy kurslar: har bir valyuta uchun alohida JSON fayl
+└── js/
+    └── app.js             # Interfeys mantiqi, tarjimalar, hisoblash va ma’lumotlarni yuklash
+```
+
+`api/` ichidagi server ishlov beruvchilari ishlashi uchun bunday ishlov beruvchilarni qo‘llab-quvvatlaydigan hosting kerak. `data/history/` hozirgi interfeys foydalanadigan tayyor tarixiy ma’lumotlarni saqlaydi; fayl nomi valyuta kodi bilan belgilanadi, masalan, `USD.json`. Tarix fayli `YYYY-MM-DD` formatidagi `date` sanasi va musbat son qiymatidagi `value` maydonlari bo‘lgan obyektlar massividan iborat.
