@@ -812,7 +812,37 @@
     .about-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
     .about-grid h3 { margin: 0 0 8px; font-size: 14px; }
     .about-grid p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.75; }
-    footer { padding: 24px 0 32px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+    .site-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-top: 28px;
+      padding: 20px 0 28px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .footer-copy { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; }
+    .footer-copy > span:first-child { color: var(--text); font-weight: 650; }
+    .footer-separator { color: var(--accent-strong); }
+    .footer-github {
+      display: inline-flex;
+      flex: 0 0 auto;
+      align-items: center;
+      gap: 8px;
+      min-height: 38px;
+      padding: 0 13px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: var(--surface);
+      color: var(--text);
+      font-weight: 600;
+      transition: border-color .16s ease, color .16s ease, background .16s ease;
+    }
+    .footer-github:hover { border-color: var(--accent-strong); color: var(--accent-strong); background: var(--surface-soft); }
+    .footer-github:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 3px; }
+    .footer-github svg { width: 17px; height: 17px; }
 
     @media (max-width: 700px) {
       .page-shell { width: min(100% - 28px, 540px); }
@@ -832,6 +862,7 @@
       .theme-switch .switch-track { width: 34px; height: 20px; flex-basis: 34px; }
       .theme-switch .switch-track span { width: 12px; height: 12px; }
       .theme-switch input:checked + .switch-track span { transform: translateX(12px); }
+      .site-footer { align-items: flex-start; flex-direction: column; gap: 14px; padding: 18px 0 24px; }
       main { padding-top: 45px; }
       .intro { margin-bottom: 26px; }
       .intro p { font-size: 14px; }

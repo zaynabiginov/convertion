@@ -68,7 +68,7 @@
         aboutEasyText: "Введите сумму, выберите валюты — результат пересчитывается автоматически. Кнопка со стрелками меняет направления конвертации местами.",
         aboutRatesTitle: "Официальные курсы", aboutRatesText: "Официальные курсы загружаются с сайта Центрального банка, курсы банков — с Bank.uz.",
         aboutCurrenciesTitle: "Поддерживаемые валюты", aboutCurrenciesText: "Доллар США, евро, российский рубль и другие валюты к узбекскому суму.",
-        footer: "convertion.uz · Курсы валют Центрального банка Узбекистана",
+        footer: "Курсы валют Центрального банка Узбекистана", githubLink: "Проект на GitHub",
         loadingRates: "Загружаем официальный курс…", loadError: "Не удалось загрузить курсы ЦБ. Проверьте подключение и откройте страницу через веб-сервер.",
         invalidAmount: "Введите корректную сумму", noRate: "Курс недоступен", source: "Последний опубликованный курс ЦБ",
         historyTitle: "Динамика курса", historyFrom: "С даты", historyTo: "По дату", historyClose: "Закрыть",
@@ -111,7 +111,7 @@
         aboutEasyText: "Miqdorni kiriting va valyutalarni tanlang — natija avtomatik hisoblanadi. Strelkali tugma konvertatsiya yo'nalishini almashtiradi.",
         aboutRatesTitle: "Rasmiy kurslar", aboutRatesText: "Rasmiy kurslar Markaziy bankdan, bank kurslari esa Bank.uz saytidan yuklanadi.",
         aboutCurrenciesTitle: "Qo'llab-quvvatlanadigan valyutalar", aboutCurrenciesText: "AQSH dollari, yevro, Rossiya rubli va boshqa valyutalar o'zbek so'miga nisbatan.",
-        footer: "convertion.uz · O'zbekiston Markaziy bankining valyuta kurslari",
+        footer: "O'zbekiston Markaziy bankining valyuta kurslari", githubLink: "GitHub loyihasi",
         loadingRates: "Rasmiy kurs yuklanmoqda…", loadError: "Markaziy bank kurslarini yuklab bo'lmadi. Internetni tekshiring va sahifani veb-server orqali oching.",
         invalidAmount: "To'g'ri miqdorni kiriting", noRate: "Kurs mavjud emas", source: "Markaziy bank e'lon qilgan so'nggi kurs",
         historyTitle: "Valyuta kursi dinamikasi", historyFrom: "Boshlanish sanasi", historyTo: "Tugash sanasi", historyClose: "Yopish",
@@ -154,7 +154,7 @@
         aboutEasyText: "Enter an amount and choose currencies — the result updates automatically. Use the arrow button to swap conversion directions.",
         aboutRatesTitle: "Official exchange rates", aboutRatesText: "Official rates come from the Central Bank; commercial bank rates are provided by Bank.uz.",
         aboutCurrenciesTitle: "Supported currencies", aboutCurrenciesText: "US dollar, euro, Russian ruble, and more currencies against the Uzbek som.",
-        footer: "convertion.uz · Central Bank of Uzbekistan exchange rates",
+        footer: "Central Bank of Uzbekistan exchange rates", githubLink: "View on GitHub",
         loadingRates: "Loading official exchange rates…", loadError: "Could not load Central Bank rates. Check your connection and open this page through a web server.",
         invalidAmount: "Enter a valid amount", noRate: "Rate unavailable", source: "Latest rate published by the Central Bank",
         historyTitle: "Exchange rate history", historyFrom: "From date", historyTo: "To date", historyClose: "Close",
@@ -239,6 +239,7 @@
     const historyScrollEnd = document.querySelector("#history-scroll-end");
     const languageSelect = document.querySelector("#language-select");
     const themeToggle = document.querySelector("#theme-toggle");
+    document.querySelector("#current-year").textContent = String(new Date().getFullYear());
     const localeCodes = { ru: "ru-RU", uz: "uz-UZ", en: "en-US" };
     let activeLanguage = readPreference("convertion-language", ["ru", "uz", "en"], "ru");
     let officialRateDate = null;
