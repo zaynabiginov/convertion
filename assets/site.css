@@ -228,7 +228,7 @@
     .theme-switch input:checked + .switch-track span { transform: translateX(14px); background: #fff; }
     .theme-switch input:focus-visible + .switch-track { outline: 2px solid var(--accent-strong); outline-offset: 3px; }
 
-    main { padding: 66px 0 76px; }
+    main { padding: 26px 0 76px; }
     .intro { max-width: 700px; margin: 0 auto 34px; text-align: center; }
     .eyebrow {
       display: inline-flex;
@@ -807,7 +807,7 @@
     }
     .history-scroll-thumb:hover { background: var(--accent); }
 
-    .about-section { margin-top: 72px; padding-top: 30px; border-top: 1px solid var(--line); }
+    .about-section { margin-top: 42px; padding-top: 30px; border-top: 1px solid var(--line); }
     .about-section h2 { margin: 0 0 20px; font-size: 23px; letter-spacing: -.035em; }
     .about-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
     .about-grid h3 { margin: 0 0 8px; font-size: 14px; }
