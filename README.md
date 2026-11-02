@@ -67,7 +67,7 @@ Open **Commercial bank rates** to view buy and sell quotes provided by Bank.uz. 
 
 ## 8. How the website works
 
-1. The browser loads `index.html`, then applies the styles from `css/site.css` and runs `js/app.js`.
+1. The browser loads `index.html`, then applies the styles from `assets/site.css` and runs `assets/app.js`.
 2. The JavaScript requests the current currency list from the Central Bank of Uzbekistan. It validates the response, normalizes rates by their published nominal values, and uses the resulting rates for the converter and currency cards. UZS is the calculation baseline.
 3. For a conversion, the site calculates `amount × source rate ÷ target rate`. Changing the amount or either currency recalculates the result immediately.
 4. Commercial bank quotes are requested from `/api/bank-rates`. The server-side handler in `api/bank-rates.js` retrieves the Bank.uz page; the browser parses its quotes and applies the selected search, filters, and sorting.
@@ -84,18 +84,16 @@ convertion/
 ├── README.md              # English user guide and project overview
 ├── READMEru.md            # Russian user guide and project overview
 ├── READMEuz.md            # Uzbek user guide and project overview
+├── favicon.svg            # Browser tab icon
 ├── api/
 │   ├── bank-rates.js      # Server-side Bank.uz quotes handler
 │   ├── cbu-history.js     # Server-side Central Bank history handler
 │   └── history.js         # Alternative Central Bank history handler
 ├── assets/
-│   └── favicon.svg        # Browser tab icon
-├── css/
+│   ├── app.js             # UI behavior, translations, conversion, and data loading
 │   └── site.css           # Layout, responsive rules, and themes
 ├── data/
 │   └── history/           # Historical rate series, one JSON file per currency
-└── js/
-    └── app.js             # UI behavior, translations, conversion, and data loading
 ```
 
 `api/` contains server-side request handlers and requires a hosting platform that supports them. `data/history/` contains the prepared history files used by the current interface; file names are currency codes, for example `USD.json`. Add or update a history series there using the same JSON structure: an array of objects with a `date` (`YYYY-MM-DD`) and a positive numeric `value`.
