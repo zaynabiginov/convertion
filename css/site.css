@@ -395,18 +395,20 @@
       position: relative;
       width: 44px;
       height: 44px;
+      display: grid;
+      place-items: center;
       margin: 0 auto 6px;
-      overflow: hidden;
+      padding: 0;
       border: 1px solid var(--line);
       border-radius: 13px;
       background: var(--surface-soft);
       color: var(--accent);
       cursor: pointer;
-      font-size: 20px;
       transition: background .2s, border-color .2s, box-shadow .2s;
     }
+    .swap-icon { display: block; width: 20px; height: 20px; }
     @keyframes swap-rotate { to { transform: rotate(180deg); } }
-    .swap-button.is-swapping { animation: swap-rotate .32s cubic-bezier(.2,.8,.2,1) forwards; }
+    .swap-button.is-swapping .swap-icon { animation: swap-rotate .32s cubic-bezier(.2,.8,.2,1) forwards; }
     .swap-button:hover { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 4px 14px rgba(8, 164, 119, .16); }
     .swap-button:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 3px; }
 
@@ -841,7 +843,8 @@
       .currency-row > label, .currency-picker { min-width: 0; }
       .currency-picker-trigger { padding: 0 34px 0 8px; font-size: 13px; }
       .currency-picker-search { font-size: 16px; }
-      .swap-button { width: 36px; height: 36px; margin-bottom: 5px; border-radius: 11px; font-size: 17px; }
+      .swap-button { width: 36px; height: 36px; margin-bottom: 5px; border-radius: 11px; }
+      .swap-icon { width: 18px; height: 18px; }
       .rates-tabs { gap: 5px; margin: 56px 0 20px; }
       .rates-tab { min-height: 40px; padding: 0 8px; font-size: 12px; }
       .section-heading { align-items: flex-start; flex-direction: column; gap: 6px; }
