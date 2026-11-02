@@ -228,7 +228,7 @@
     .theme-switch input:checked + .switch-track span { transform: translateX(14px); background: #fff; }
     .theme-switch input:focus-visible + .switch-track { outline: 2px solid var(--accent-strong); outline-offset: 3px; }
 
-    main { padding: 26px 0 76px; }
+    main { padding: 26px 0 7px; }
     .intro { max-width: 700px; margin: 0 auto 34px; text-align: center; }
     .eyebrow {
       display: inline-flex;
