@@ -837,8 +837,10 @@
       .card-heading { align-items: flex-start; flex-direction: column; gap: 7px; }
       .conversion-layout { grid-template-columns: 1fr; gap: 18px; }
       .result-panel { align-items: flex-start; padding: 15px 0 0; border-top: 1px solid var(--line); border-left: 0; text-align: left; }
-      .currency-row { grid-template-columns: 1fr 42px 1fr; gap: 7px; }
+      .currency-row { grid-template-columns: minmax(0, 1fr) 36px minmax(0, 1fr); gap: 6px; }
+      .currency-row > label, .currency-picker { min-width: 0; }
       .currency-picker-trigger { padding: 0 34px 0 8px; font-size: 13px; }
+      .currency-picker-search { font-size: 16px; }
       .swap-button { width: 36px; height: 36px; margin-bottom: 5px; border-radius: 11px; font-size: 17px; }
       .rates-tabs { gap: 5px; margin: 56px 0 20px; }
       .rates-tab { min-height: 40px; padding: 0 8px; font-size: 12px; }
@@ -846,22 +848,39 @@
       .section-heading h2 { white-space: normal; }
       .rate-tools { width: 100%; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 10px 14px; }
       .rate-search { flex: 1 1 100%; max-width: none; }
+      .rate-search input, .rate-amount-control input { font-size: 16px; }
       .section-note { white-space: normal; }
       .rates-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
       .rate-card { align-items: flex-start; flex-direction: column; gap: 10px; padding: 13px; }
       .rate-value { text-align: left; }
       .commercial-rates-section { margin-top: 38px; }
-      .bank-filter-label { flex-basis: calc(50% - 6px); }
+      .bank-filter-label { min-width: 0; flex-basis: calc(50% - 6px); }
+      .bank-filter-label input { font-size: 16px; }
       .bank-rates-table th, .bank-rates-table td { padding: 12px 10px; }
       .bank-rates-table th, .bank-rates-table td { font-size: 12px; }
-      .history-controls { align-items: stretch; flex-direction: column; }
-      .history-controls label, .history-controls input { width: 100%; }
+      .history-controls { align-items: stretch; flex-direction: column; flex-wrap: nowrap; }
+      .history-controls label { width: 100%; min-width: 0; }
+      .history-controls input { width: 100%; min-width: 0; max-width: 100%; font-size: 16px; }
       .history-chart { min-height: 190px; flex-basis: 240px; }
       .history-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .history-stat:last-child { grid-column: 1 / -1; }
-      .history-tools { align-items: flex-start; flex-direction: column; }
+      .history-tools { width: 100%; min-width: 0; flex: 0 1 auto; align-items: flex-start; flex-direction: column; }
+      .history-presets, .history-zoom { max-width: 100%; }
       .history-zoom { margin-left: 0; }
-      .history-dialog { width: calc(100vw - 20px); min-width: calc(100vw - 20px); height: min(760px, calc(92vh - 12px)); min-height: 350px; max-width: calc(100vw - 20px); max-height: calc(100vh - 12px); resize: both; }
+      .history-dialog {
+        width: calc(100vw - 16px);
+        min-width: 0;
+        height: calc(100vh - 16px);
+        height: calc(100dvh - 16px);
+        min-height: min(350px, calc(100vh - 16px));
+        min-height: min(350px, calc(100dvh - 16px));
+        max-width: calc(100vw - 16px);
+        max-height: calc(100vh - 16px);
+        max-height: calc(100dvh - 16px);
+        overflow-x: hidden;
+        resize: none;
+      }
+      .history-dialog-inner { padding: 16px; }
       .history-scrollbar { gap: 7px; }
       .history-scrollbar-label { min-width: 0; max-width: 82px; overflow: hidden; text-overflow: ellipsis; }
       .about-grid { grid-template-columns: 1fr; gap: 20px; }
