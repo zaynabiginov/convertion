@@ -895,6 +895,51 @@
       }).format(new Date(`${date}T00:00:00Z`));
     }
 
+    function normalizeOfficialRateDate(date) {
+      if (typeof date !== "string") return null;
+      const value = date.trim();
+      let normalized = value;
+      const localizedDate = value.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+      if (localizedDate) normalized = `${localizedDate[3]}-${localizedDate[2]}-${localizedDate[1]}`;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(normalized)) return null;
+      const timestamp = Date.parse(`${normalized}T00:00:00Z`);
+      return Number.isFinite(timestamp) && new Date(timestamp).toISOString().slice(0, 10) === normalized
+        ? normalized
+        : null;
+    }
+
+    function mergeLatestOfficialRate(series, currency) {
+      const date = normalizeOfficialRateDate(officialRateDate);
+      if (!date || !currency || !Number.isFinite(currency.rate) || currency.rate <= 0) return series;
+
+      const lastPoint = series[series.length - 1];
+      if (lastPoint && lastPoint.date > date) return series;
+      if (lastPoint && lastPoint.date === date && lastPoint.value === currency.rate) return series;
+
+      const latestPoint = { date, value: currency.rate };
+      return lastPoint && lastPoint.date === date
+        ? [...series.slice(0, -1), latestPoint]
+        : [...series, latestPoint];
+    }
+
+    function refreshCachedHistory(currency) {
+      const cachedSeries = historyCache.get(currency.code);
+      if (!cachedSeries) return;
+      const updatedSeries = mergeLatestOfficialRate(cachedSeries, currency);
+      if (updatedSeries === cachedSeries) return;
+      historyCache.set(currency.code, updatedSeries);
+      if (!historyDialog.open || !selectedHistoryCurrency || selectedHistoryCurrency.code !== currency.code) return;
+
+      selectedHistorySeries = updatedSeries;
+      const previousMaximum = historyToInput.max;
+      const latestDate = updatedSeries[updatedSeries.length - 1].date;
+      historyFromInput.max = latestDate;
+      historyToInput.max = latestDate;
+      if (historyToInput.value === previousMaximum) historyToInput.value = latestDate;
+      if (historyFromInput.value > latestDate) historyFromInput.value = latestDate;
+      renderHistoryChart();
+    }
+
     function configureHistoryDates(series) {
       const firstDate = series[0].date;
       const lastDate = series[series.length - 1].date;
@@ -1217,7 +1262,9 @@
 
     async function openCurrencyHistory(currency) {
       selectedHistoryCurrency = currency;
-      selectedHistorySeries = historyCache.get(currency.code) || null;
+      const cachedSeries = historyCache.get(currency.code);
+      selectedHistorySeries = cachedSeries ? mergeLatestOfficialRate(cachedSeries, currency) : null;
+      if (selectedHistorySeries) historyCache.set(currency.code, selectedHistorySeries);
       historyTitle.textContent = `${translations[activeLanguage].historyTitle} · ${currency.code}`;
       historySubtitle.textContent = `${countryName(currency)} · ${currencyName(currency)}`;
       const previousSvg = historyChart.querySelector("svg");
@@ -1262,10 +1309,12 @@
         if (hasInvalidPoint) throw new Error("CBU history contains an invalid date or rate");
         series.sort((left, right) => left.date.localeCompare(right.date));
         if (!series.length) throw new Error("CBU history contains no valid data points");
-        historyCache.set(currency.code, series);
+        const latestCurrency = currencies.find((item) => item.code === currency.code);
+        const currentSeries = mergeLatestOfficialRate(series, latestCurrency);
+        historyCache.set(currency.code, currentSeries);
         if (!historyDialog.open || requestId !== historyRequestId) return;
-        selectedHistorySeries = series;
-        configureHistoryDates(series);
+        selectedHistorySeries = currentSeries;
+        configureHistoryDates(currentSeries);
         historyFromInput.focus();
       } catch (error) {
         if (controller.signal.aborted && !historyDialog.open) return;
@@ -1401,6 +1450,7 @@
         fromSelect.value = currencies.some(({ code }) => code === selectedFrom) ? selectedFrom : "UZS";
         toSelect.value = currencies.some(({ code }) => code === selectedTo) ? selectedTo : "USD";
         officialRateDate = data.find((item) => item.Date)?.Date || null;
+        bankCurrencies.forEach(refreshCachedHistory);
         rateLoadFailed = false;
         renderRateCards();
         updateConversion();

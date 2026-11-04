@@ -71,10 +71,10 @@ Open **Commercial bank rates** to view buy and sell quotes provided by Bank.uz. 
 2. The JavaScript requests the current currency list from the Central Bank of Uzbekistan. It validates the response, normalizes rates by their published nominal values, and uses the resulting rates for the converter and currency cards. UZS is the calculation baseline.
 3. For a conversion, the site calculates `amount × source rate ÷ target rate`. Changing the amount or either currency recalculates the result immediately.
 4. Commercial bank quotes are requested from `/api/bank-rates`. The server-side handler in `api/bank-rates.js` retrieves the Bank.uz page; the browser parses its quotes and applies the selected search, filters, and sorting.
-5. When a currency card is opened, the browser loads that currency's saved history from `data/history/<CODE>.json`, validates and sorts the points, then draws the chart and period statistics. The loaded series is cached in memory while the page remains open.
+5. When a currency card is opened, the browser loads that currency's saved history from `data/history/<CODE>.json`, validates and sorts the points, then adds the latest official rate and date from the live Central Bank rates response before drawing the chart and period statistics. The loaded series is cached in memory while the page remains open.
 6. Language and theme preferences are stored in the browser's local storage. Rates are refreshed when the page becomes visible and at regular intervals while it remains open.
 
-The two history handlers in `api/cbu-history.js` and `api/history.js` provide server-side ways to retrieve history from the Central Bank. The current browser interface loads the prepared JSON files in `data/history/` directly.
+The history handlers in `api/cbu-history.js` and `api/history.js` provide server-side ways to retrieve history from the Central Bank on hosting platforms that support API functions. The static browser interface loads the prepared JSON files and merges in the latest official rate from the live rates response.
 
 ## 9. Project structure
 
