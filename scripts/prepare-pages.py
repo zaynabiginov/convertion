@@ -214,6 +214,11 @@ def prepare_site(output):
     for filename in ("app.js", "site.css"):
         source = ROOT / "assets" / filename
         (output / "assets" / filename).write_bytes(source.read_bytes())
+    weather_output = output / "weather"
+    weather_output.mkdir(parents=True, exist_ok=True)
+    for filename in ("index.html", "app.js", "style.css"):
+        source = ROOT / "weather" / filename
+        (weather_output / filename).write_bytes(source.read_bytes())
 
     codes = fetch_currency_codes()
     with ThreadPoolExecutor(max_workers=8) as executor:

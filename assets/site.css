@@ -27,6 +27,7 @@
     }
 
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
@@ -73,6 +74,17 @@
     }
 
     .header-actions { display: flex; align-items: center; gap: 20px; }
+    .weather-nav-link {
+      width: 32px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      color: #7db7f5;
+      transition: transform .16s ease, opacity .16s ease;
+    }
+    .weather-nav-link:hover { transform: translateY(-2px); opacity: .85; }
+    .weather-nav-link:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 3px; border-radius: 5px; }
+    .weather-nav-link svg { width: 26px; height: 26px; }
     .header-preferences {
       display: flex;
       align-items: center;
@@ -807,6 +819,23 @@
     }
     .history-scroll-thumb:hover { background: var(--accent); }
 
+    .weather-section {
+      position: relative;
+      left: 50%;
+      width: var(--viewport-width, 100vw);
+      margin: 33px 0 0;
+      padding-top: 13px;
+      border-top: 1px solid var(--line);
+      transform: translateX(-50%);
+      scroll-margin-top: 20px;
+    }
+    .weather-section h2 {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto 20px;
+      font-size: 23px;
+      letter-spacing: -.035em;
+    }
+    .weather-frame { display: block; width: 100%; min-height: 900px; border: 0; background: var(--page); }
     .about-section { margin-top: 33px; padding-top: 13px; border-top: 1px solid var(--line); }
     .about-section h2 { margin: 0 0 20px; font-size: 23px; letter-spacing: -.035em; }
     .about-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
@@ -838,6 +867,8 @@
     .footer-copy { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; }
     .footer-copy > span:first-child { color: var(--text); font-weight: 650; }
     .footer-separator { color: var(--accent-strong); }
+    .weather-source { color: var(--accent-strong); }
+    .weather-source:hover { text-decoration: underline; }
     .footer-github {
       display: inline-flex;
       flex: 0 0 auto;
@@ -864,6 +895,8 @@
       .page-shell { width: min(100% - 28px, 540px); }
       .site-header { height: 70px; }
       .header-actions { gap: 8px; }
+      .weather-nav-link { width: 28px; height: 36px; }
+      .weather-nav-link svg { width: 24px; height: 24px; }
       .brand { gap: 8px; font-size: 15px; }
       .brand-mark { width: 36px; height: 36px; border-radius: 11px; }
 
@@ -934,6 +967,7 @@
       .history-scrollbar { gap: 7px; }
       .history-scrollbar-label { min-width: 0; max-width: 82px; overflow: hidden; text-overflow: ellipsis; }
       .about-grid { grid-template-columns: 1fr; gap: 20px; }
+      .weather-section h2 { width: calc(100% - 28px); }
     }
 
     @media (max-width: 400px) {

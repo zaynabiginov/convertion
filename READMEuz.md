@@ -1,102 +1,92 @@
-# Convertion.uz valyuta konvertoridan foydalanish bo‘yicha qo‘llanma
+# Convertion.uz
+
+O‘zbekiston va boshqa shaharlar uchun valyuta konvertori hamda ob-havo prognozi.
 
 [English](README.md) | [Русский](READMEru.md) | [O‘zbekcha](READMEuz.md)
 
-## 1. Xizmat haqida
+## Imkoniyatlar
 
-Convertion.uz turli valyutalarni O‘zbekiston so‘miga va boshqa qo‘llab-quvvatlanadigan valyutalarga hisoblash, O‘zbekiston Respublikasi Markaziy bankining rasmiy kurslarini ko‘rish hamda tijorat banklari takliflarini taqqoslash uchun mo‘ljallangan. Valyuta kurslari internet orqali yuklanadi; saytdan foydalanayotganda internetga ulangan bo‘ling. Sahifa ishlamasa yoki kurslar yuklanmasa, saytni brauzerda veb-manzil orqali oching. Faylni kompyuterdan bevosita (`file://`) ochishda ayrim ma’lumotlar yuklanmasligi mumkin.
+- O‘zbekiston Respublikasi Markaziy banki kurslari asosida O‘zbekiston so‘mi (UZS) va boshqa qo‘llab-quvvatlanadigan valyutalar o‘rtasida hisoblash.
+- Valyuta kartochkalari, qidiruv, kurslar tarixi, grafiklar va tanlangan davr statistikasi.
+- Tijorat banklarining sotib olish va sotish kurslarini qidirish, filtrlash va saralash orqali taqqoslash.
+- Joriy ob-havo, soatlik prognoz va 7 kunlik prognoz. Har bir kun uchun ertalab, kunduzi, kechqurun va kechasi ko‘rsatkichlari mavjud.
+- Shaharni qidirish yoki joriy joylashuvni aniqlash. Ob-havo bo‘limi yuklanganda brauzer geolokatsiyaga ruxsat so‘raydi.
+- O‘zbek, rus va ingliz tillari, yorug‘ va qorong‘i mavzular.
 
-## 2. Til va ko‘rinishni tanlash
+## Mahalliy ishga tushirish
 
-- Sahifaning yuqori o‘ng qismidagi **UZ / RU / EN** ro‘yxatidan interfeys tilini tanlang.
-- Oy belgisi qorong‘i, quyosh belgisi yorug‘ mavzuni bildiradi. Kalitni bosib mavzuni almashtiring.
-- Til va mavzu tanlovi shu brauzerda saqlanadi. Boshqa qurilma yoki brauzerda ularni qayta tanlash kerak bo‘lishi mumkin.
+`index.html` faylini bevosita ochmang, loyiha papkasini HTTP server orqali ishga tushiring. Windows’da loyiha papkasidan quyidagi buyruqlardan birini bajaring:
 
-## 3. Valyutani hisoblash
+```powershell
+py -m http.server 8000
+# Python Launcher mavjud bo‘lmasa:
+python -m http.server 8000
+```
 
-1. **Summa** maydoniga hisoblamoqchi bo‘lgan miqdorni kiriting. Qiymat manfiy bo‘lmasligi kerak; o‘nli kasr ham kiritish mumkin.
-2. Boshlang‘ich va maqsadli valyuta ro‘yxatlaridan kerakli valyutalarni tanlang. Qidiruv maydoniga valyuta kodi yoki nomini yozib, ro‘yxatni toraytiring.
-3. Hisob natijasi avtomatik yangilanadi. Natija ostida qo‘llangan kurs va rasmiy kursning sanasi ko‘rsatiladi.
-4. Yo‘nalishni almashtirish uchun ikki valyuta orasidagi **almashtirish** tugmasini bosing. Miqdor saqlanadi, faqat boshlang‘ich va maqsadli valyutalar o‘rin almashadi.
+Brauzerda [http://localhost:8000](http://localhost:8000) manzilini oching. Paketlarni o‘rnatish yoki loyihani yig‘ish talab qilinmaydi.
 
-Valyutalardan biri sifatida **UZS** tanlansa, natija so‘mga yoki so‘mdan hisoblanadi. Ikki xorijiy valyuta tanlanganda konvertor ularning Markaziy bank kurslari bo‘yicha hisoblaydi. Kurslar va sonlar ekranning tanlangan tiliga mos shaklda chiqariladi.
+Geolokatsiya HTTPS saytlarida va localhost’da ishlaydi. Brauzer so‘raganda joylashuvga ruxsat bering. Ruxsat berilmasa yoki koordinatalar olinmasa, Toshkent ob-havosi ko‘rsatiladi. Joylashuv tugmasi orqali qayta urinib ko‘rish yoki shaharni qidirish mumkin. Koordinatalar prognozni olish va shahar nomini Open-Meteo orqali aniqlash uchun ishlatiladi.
 
-## 4. Markaziy bank kurslari
+## Valyuta konvertori
 
-**Markaziy bank kurslari** bo‘limida mavjud valyutalar kartochkalari ko‘rsatiladi.
+1. Miqdorni kiriting va boshlang‘ich hamda maqsadli valyutalarni tanlang. Ro‘yxatlarni valyuta nomi yoki kodi bo‘yicha qidirish mumkin.
+2. Natija avtomatik hisoblanadi. Ikki valyuta orasidagi almashtirish tugmasi hisoblash yo‘nalishini o‘zgartiradi.
+3. Markaziy bank kurslari kartochkalarida valyuta va summani tanlang. Kurs tarixini ochish uchun kartochkani bosing.
+4. Tijorat banklari jadvalini bank, valyuta, kurs turi va narx oralig‘i bo‘yicha filtrlash, sarlavhalar orqali saralash mumkin. Sotib olish va sotish bank nuqtai nazaridan ko‘rsatiladi: bankdan xorijiy valyuta olayotganda **Sotish**, bankka valyuta topshirayotganda **Sotib olish** kursini taqqoslang.
+5. Kurs tarixi oynasida sanalar yoki tayyor davrni tanlang, grafik qiymatlarini ko‘ring, masshtabni o‘zgartiring va statistikani tekshiring.
 
-- Kartochkada valyuta kodi, nomi, mamlakat va hisoblash qiymati ko‘rinadi.
-- Qidiruv orqali mamlakat yoki valyuta nomi/kodini toping.
-- Dastlab asosiy valyutalarning bir qismi ko‘rsatiladi. **Barcha kurslarni ko‘rsatish** tugmasi qolganlarini ochadi; tugmani yana bosish ro‘yxatni yig‘adi. Qidiruv faol bo‘lsa, mos natijalar ko‘rsatiladi.
-- **Summa** maydoni ro‘yxatdagi har bir kurs uchun hisoblanadigan miqdorni o‘zgartiradi. Noto‘g‘ri yoki manfiy qiymat kiritilsa, hisoblash ko‘rsatilmaydi.
-- **Teskari kurs** kaliti qiymat ko‘rinishini almashtiradi: odatiy ko‘rinishda xorijiy valyutadagi miqdor so‘mga hisoblanadi; teskari ko‘rinishda so‘mdagi miqdor xorijiy valyutaga hisoblanadi.
+Tanlangan til va mavzu joriy brauzerda saqlanadi.
 
-Kurs kartochkasini bosing — shu valyutaning tarixiy kursi oynasi ochiladi.
+## Ob-havo
 
-## 5. Kurs tarixini ko‘rish
+Ob-havo bo‘limi bosh sahifaga joylashtirilgan; uni `weather/index.html` manzilida alohida ham ochish mumkin. Bo‘lim joriy sharoitlar, keyingi 24 soat va 7 kunlik prognozni ko‘rsatadi. Kunlik prognozda harorat, his etiladigan harorat, shamol, namlik, bosim, kunduz davomiyligi, quyosh chiqishi va botishi, UV indeksi hamda Oy fazasi beriladi. Kp geomagnit prognozini ma’lumot mavjud bo‘lsa NOAA taqdim etadi.
 
-Tarix oynasida Markaziy bank e’lon qilgan tanlangan valyuta kursining vaqt bo‘yicha grafigi va davr statistikasi beriladi.
+Joylashuv tugmasi geolokatsiyani qayta so‘rash imkonini beradi. Ruxsat berilmasa, Toshkent prognozi qoladi; qidiruv orqali boshqa shaharni tanlash mumkin. Sahifa `file://` orqali bevosita ochilganda yoki xavfsiz bo‘lmagan, localhost bo‘lmagan manzilda geolokatsiya ishlamasligi mumkin.
 
-1. **Boshlanish sanasi** va **Tugash sanasi** maydonlarini o‘zgartiring yoki tayyor davrlardan foydalaning: 1, 3 yoki 6 oy; 1, 3, 5 yoki 7 yil; **Hammasi**.
-2. Boshlanish sanasi tugash sanasidan oldin bo‘lishi kerak. Tanlangan davrda e’lon qilingan qiymatlar bo‘lmasa, grafik uchun ma’lumot chiqmaydi.
-3. Grafikdagi nuqtaga kursorni olib borib sana va qiymatni ko‘ring. Sichqoncha g‘ildiragi masshtabni o‘zgartiradi, grafikni sudrash esa vaqt oralig‘ini siljitadi.
-4. **+ / −** tugmalari bilan yaqinlashtiring yoki uzoqlashtiring; **Masshtabni tiklash** dastlabki ko‘rinishga qaytaradi. Pastdagi gorizontal slayder bilan grafik davri bo‘ylab harakatlaning.
-5. Oyna o‘lchamini uning pastki o‘ng burchagini sudrab o‘zgartirish mumkin. Ish tugagach, **Yopish** tugmasini bosing.
+## Ma’lumot manbalari
 
-Statistikada so‘nggi qiymat, minimum, maksimum, o‘rtacha qiymat va tanlangan davrdagi o‘zgarish ko‘rsatiladi.
+- O‘zbekiston Respublikasi Markaziy banki — rasmiy valyuta kurslari va kurslar tarixi.
+- Bank.uz — tijorat banklarining valyuta sotib olish va sotish kurslari.
+- Open-Meteo — joylarni qidirish va ob-havo prognozi.
+- NOAA Space Weather Prediction Center — Kp geomagnit prognozi.
 
-## 6. Tijorat banklari kurslari
+Kurslar va ob-havoni olish uchun internet kerak. Manbalar vaqtincha ishlamay qolishi, ayrim prognoz kunlari uchun Kp ma’lumoti mavjud bo‘lmasligi mumkin.
 
-**Tijorat banklari kurslari** bo‘limiga o‘tib, Bank.uz’dan olingan sotib olish va sotish takliflarini ko‘ring. Jadvalni quyidagicha toraytirish mumkin:
+## Statik nashrni tayyorlash
 
-- bank nomi bo‘yicha qidirish;
-- USD, RUB, EUR, GBP yoki KZT valyutasini tanlash (yoki barcha valyutalarni ko‘rsatish);
-- narx turini — **Sotib olish** yoki **Sotish** — tanlash;
-- tanlangan narx uchun **Narxdan** va **Narxgacha** chegaralarini kiritish. Chegaralarni bo‘sh qoldirish mumkin;
-- jadval sarlavhasini bosib bank, valyuta yoki sotib olish/sotish narxi bo‘yicha saralash. Sarlavhani qayta bosish saralash yo‘nalishini almashtiradi.
+Loyihani ishga tushirish uchun paketlar kerak emas. Joriy bank kurslari, Markaziy bank kurslari tarixi va ob-havo bo‘limi mavjud statik saytni tayyorlash uchun quyidagini bajaring:
 
-**Muhim:** bank nuqtai nazaridan “sotib olish” — bank valyutani mijozdan oladigan narx; “sotish” — bank valyutani mijozga sotadigan narx. Siz xorijiy valyutani sotib olmoqchi bo‘lsangiz, bankning **Sotish** narxini; bankka valyuta sotmoqchi bo‘lsangiz, **Sotib olish** narxini taqqoslang. Kurs vaqti/statusi jadval yaqinida ko‘rsatiladi. Takliflar o‘zgarishi mumkin — ayirboshlashdan oldin kursni bankning o‘zida aniqlashtiring. Manba: Bank.uz.
+```powershell
+python scripts/prepare-pages.py --output .\pages-output
+```
 
-## 7. Ma’lumotlar va muammolarni bartaraf etish
+Natija papkasi yangi yoki bo‘sh bo‘lishi kerak. Skript ma’lumotlarni yuklab, sayt fayllarini tayyorlaydi; natija papkasi statik hostingga joylanadi. Brauzer geolokatsiyani taklif qilishi uchun saytni HTTPS orqali oching.
 
-- Rasmiy valyuta kurslari O‘zbekiston Respublikasi Markaziy bankidan, tijorat banklari takliflari esa Bank.uz’dan olinadi. Kurs manbalari bir-biridan farq qilishi mumkin.
-- Kurslar ma’lumot uchun; yakuniy ayirboshlash summasi bank shartlari, komissiya va kurs o‘zgarganiga qarab farq qilishi mumkin.
-- **Kurs mavjud emas** yoki yuklash xatosi ko‘rinsa, internet aloqasini tekshiring, sahifani qayta yuklang va birozdan keyin yana urinib ko‘ring. Markaziy bank yoki Bank.uz xizmati vaqtincha ishlamayotgan bo‘lishi ham mumkin.
-- Bank jadvali bo‘sh bo‘lsa, qidiruv va filtrlarni tozalang, valyutani **Barcha valyutalar** holatiga qaytaring va minimal/maksimal narx chegaralarini tekshiring.
-- Tarixiy grafik ochilmasa, birozdan keyin qayta urinib ko‘ring yoki sanalarni kengroq davrga o‘zgartiring.
+`api/` ichidagi ishlov beruvchilar server funksiyalarini qo‘llab-quvvatlaydigan serverless hostinglar uchun. GitHub Pages bu ishlov beruvchilarni bajarmaydi.
 
-## 8. Sayt qanday ishlaydi
-
-1. Brauzer `index.html` faylini yuklaydi, so‘ng `assets/site.css` uslublarini qo‘llaydi va `assets/app.js` skriptini ishga tushiradi.
-2. JavaScript O‘zbekiston Markaziy bankidan joriy valyuta kurslarini so‘raydi. Javob tekshiriladi va kurslar e’lon qilingan nominalga bo‘linib normallashtiriladi. Konvertor va valyuta kartochkalari shu ma’lumotlardan foydalanadi; hisoblashning asosiy valyutasi — UZS.
-3. Konvertatsiya `summa × boshlang‘ich valyuta kursi ÷ maqsadli valyuta kursi` formulasi bilan hisoblanadi. Summa yoki valyuta o‘zgarsa, natija avtomatik yangilanadi.
-4. GitHub Pages’da GitHub Actions bank kurslarini har 30 daqiqada Bank.uz saytidan bevosita yuklab, statik sayt bilan birga e’lon qiladi. Brauzer tanlangan qidiruv, filtr va saralashni qo‘llaydi.
-5. Valyuta kartochkasi ochilganda, brauzer Markaziy bankdan saytni nashr qilish vaqtida bevosita yuklab olingan tarixni yuklaydi, nuqtalarni tekshiradi va saralaydi, so‘ng grafik hamda davr statistikasini chizadi. Yuklangan qator sahifa ochiq turgan vaqt davomida xotirada saqlanadi.
-6. Til va mavzu sozlamalari brauzerning mahalliy xotirasida saqlanadi. Sahifaga qaytilganda va sahifa ko‘rinib turgan paytda muntazam ravishda kurslar yangilanadi.
-
-GitHub Pages statik hosting bo‘lgani uchun tashrifchi grafikni ochgan paytda Bank.uz yoki Markaziy bankka serverdan so‘rov yubora olmaydi. `scripts/prepare-pages.py` vazifasi har bir nashrda va har 30 daqiqada joriy bank kurslari hamda valyuta tarixini manbalardan bevosita yuklaydi va vaqtinchalik Pages artefaktini yaratadi. Ma’lumotlar repozitoriyda saqlanmaydi. 30 daqiqada bir yangilash — GitHub Pages’da mumkin bo‘lgan eng yaqin yangilanish oralig‘i, lekin real vaqt emas. Har bir tashrifchi so‘rovida onlayn yuklash uchun `api/` dagi ishlov beruvchilarni qo‘llaydigan server hostingidan foydalaning.
-
-## 9. Loyiha papkalari va fayllari
+## Loyiha tuzilishi
 
 ```text
 convertion/
-├── index.html             # Sahifa tuzilishi va interfeys elementlari
-├── README.md              # Ingliz tilidagi yo‘riqnoma va loyiha tavsifi
-├── READMEru.md            # Rus tilidagi yo‘riqnoma va loyiha tavsifi
-├── READMEuz.md            # O‘zbek tilidagi yo‘riqnoma va loyiha tavsifi
-├── favicon.svg            # Brauzer oynasidagi sayt belgisi
-├── .github/
-│   └── workflows/
-│       └── deploy-pages.yml # Joriy ma’lumotlarni yuklash va 30 daqiqada e’lon qilish
-├── api/
-│   ├── bank-rates.js      # Bank.uz kurslari uchun server ishlov beruvchisi
-│   ├── cbu-history.js     # Markaziy bank tarixi uchun server ishlov beruvchisi
-│   └── history.js         # Markaziy bank tarixi uchun muqobil ishlov beruvchi
+├── index.html
 ├── assets/
-│   ├── app.js             # Interfeys mantiqi, tarjimalar, hisoblash va ma’lumotlarni yuklash
-│   └── site.css           # Uslublar, moslashuvchan maket va mavzular
-└── scripts/
-    └── prepare-pages.py   # E’lon paytida Markaziy bank tarixi va Bank.uz kurslarini yuklash
+│   ├── app.js
+│   └── site.css
+├── weather/
+│   ├── index.html
+│   ├── app.js
+│   └── style.css
+├── data/
+│   ├── bank-rates.json
+│   └── history/
+├── api/
+│   ├── bank-rates.js
+│   ├── cbu-history.js
+│   └── history.js
+├── scripts/
+│   ├── prepare-pages.py
+│   └── update-bank-rates.py
+├── README.md
+├── READMEru.md
+└── READMEuz.md
 ```
-
-`api/` ichidagi ishlov beruvchilarni qo‘llaydigan hosting server funksiyalarini talab qiladi. GitHub Pages orqali nashr etish uchun **Settings → Pages → Build and deployment → Source** bo‘limida **GitHub Actions** ni tanlang. Tarix vaqtinchalik nashr artefaktida yaratiladi va repozitoriyda saqlanmaydi.
