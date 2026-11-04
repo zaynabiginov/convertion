@@ -70,11 +70,11 @@ Statistikada so‘nggi qiymat, minimum, maksimum, o‘rtacha qiymat va tanlangan
 1. Brauzer `index.html` faylini yuklaydi, so‘ng `assets/site.css` uslublarini qo‘llaydi va `assets/app.js` skriptini ishga tushiradi.
 2. JavaScript O‘zbekiston Markaziy bankidan joriy valyuta kurslarini so‘raydi. Javob tekshiriladi va kurslar e’lon qilingan nominalga bo‘linib normallashtiriladi. Konvertor va valyuta kartochkalari shu ma’lumotlardan foydalanadi; hisoblashning asosiy valyutasi — UZS.
 3. Konvertatsiya `summa × boshlang‘ich valyuta kursi ÷ maqsadli valyuta kursi` formulasi bilan hisoblanadi. Summa yoki valyuta o‘zgarsa, natija avtomatik yangilanadi.
-4. Tijorat banklari kurslari `data/bank-rates.json` faylidan yuklanadi. GitHub Actions har 30 daqiqada Bank.uz ma’lumotlari bilan faylni yangilab, statik sayt bilan birga e’lon qiladi. Brauzer tanlangan qidiruv, filtr va saralashni qo‘llaydi.
-5. Valyuta kartochkasi ochilganda, brauzer uning saqlangan tarixini `data/history/<KOD>.json` faylidan yuklaydi, nuqtalarni tekshiradi va saralaydi, Markaziy bankning joriy javobidan eng so‘nggi rasmiy kurs va sanani qo‘shadi, so‘ng grafik hamda davr statistikasini chizadi. Yuklangan qator sahifa ochiq turgan vaqt davomida xotirada saqlanadi.
+4. GitHub Pages’da GitHub Actions bank kurslarini har 30 daqiqada Bank.uz saytidan bevosita yuklab, statik sayt bilan birga e’lon qiladi. Brauzer tanlangan qidiruv, filtr va saralashni qo‘llaydi.
+5. Valyuta kartochkasi ochilganda, brauzer Markaziy bankdan saytni nashr qilish vaqtida bevosita yuklab olingan tarixni yuklaydi, nuqtalarni tekshiradi va saralaydi, so‘ng grafik hamda davr statistikasini chizadi. Yuklangan qator sahifa ochiq turgan vaqt davomida xotirada saqlanadi.
 6. Til va mavzu sozlamalari brauzerning mahalliy xotirasida saqlanadi. Sahifaga qaytilganda va sahifa ko‘rinib turgan paytda muntazam ravishda kurslar yangilanadi.
 
-`api/cbu-history.js` va `api/history.js` ishlov beruvchilari API funksiyalarini qo‘llab-quvvatlaydigan hostinglarda Markaziy bankdan tarixiy ma’lumotlarni server orqali olish imkonini beradi. Statik brauzer interfeysi tayyor JSON fayllarini yuklab, ularni Markaziy bankning joriy javobidagi eng so‘nggi rasmiy kurs bilan to‘ldiradi. Tijorat banklari uchun `data/bank-rates.json` faylini GitHub Actions’dagi `scripts/update-bank-rates.py` vazifasi server API’siz yangilab turadi.
+GitHub Pages statik hosting bo‘lgani uchun tashrifchi grafikni ochgan paytda Bank.uz yoki Markaziy bankka serverdan so‘rov yubora olmaydi. `scripts/prepare-pages.py` vazifasi har bir nashrda va har 30 daqiqada joriy bank kurslari hamda valyuta tarixini manbalardan bevosita yuklaydi va vaqtinchalik Pages artefaktini yaratadi. Ma’lumotlar repozitoriyda saqlanmaydi. 30 daqiqada bir yangilash — GitHub Pages’da mumkin bo‘lgan eng yaqin yangilanish oralig‘i, lekin real vaqt emas. Har bir tashrifchi so‘rovida onlayn yuklash uchun `api/` dagi ishlov beruvchilarni qo‘llaydigan server hostingidan foydalaning.
 
 ## 9. Loyiha papkalari va fayllari
 
@@ -85,6 +85,9 @@ convertion/
 ├── READMEru.md            # Rus tilidagi yo‘riqnoma va loyiha tavsifi
 ├── READMEuz.md            # O‘zbek tilidagi yo‘riqnoma va loyiha tavsifi
 ├── favicon.svg            # Brauzer oynasidagi sayt belgisi
+├── .github/
+│   └── workflows/
+│       └── deploy-pages.yml # Joriy ma’lumotlarni yuklash va 30 daqiqada e’lon qilish
 ├── api/
 │   ├── bank-rates.js      # Bank.uz kurslari uchun server ishlov beruvchisi
 │   ├── cbu-history.js     # Markaziy bank tarixi uchun server ishlov beruvchisi
@@ -92,8 +95,8 @@ convertion/
 ├── assets/
 │   ├── app.js             # Interfeys mantiqi, tarjimalar, hisoblash va ma’lumotlarni yuklash
 │   └── site.css           # Uslublar, moslashuvchan maket va mavzular
-└── data/
-    └── history/           # Tarixiy kurslar: har bir valyuta uchun alohida JSON fayl
+└── scripts/
+    └── prepare-pages.py   # E’lon paytida Markaziy bank tarixi va Bank.uz kurslarini yuklash
 ```
 
-`api/` ichidagi server ishlov beruvchilari ishlashi uchun bunday ishlov beruvchilarni qo‘llab-quvvatlaydigan hosting kerak. `data/history/` hozirgi interfeys foydalanadigan tayyor tarixiy ma’lumotlarni saqlaydi; fayl nomi valyuta kodi bilan belgilanadi, masalan, `USD.json`. Tarix fayli `YYYY-MM-DD` formatidagi `date` sanasi va musbat son qiymatidagi `value` maydonlari bo‘lgan obyektlar massividan iborat.
+`api/` ichidagi ishlov beruvchilarni qo‘llaydigan hosting server funksiyalarini talab qiladi. GitHub Pages orqali nashr etish uchun **Settings → Pages → Build and deployment → Source** bo‘limida **GitHub Actions** ni tanlang. Tarix vaqtinchalik nashr artefaktida yaratiladi va repozitoriyda saqlanmaydi.

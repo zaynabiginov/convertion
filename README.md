@@ -70,11 +70,11 @@ Open **Commercial bank rates** to view buy and sell quotes provided by Bank.uz. 
 1. The browser loads `index.html`, then applies the styles from `assets/site.css` and runs `assets/app.js`.
 2. The JavaScript requests the current currency list from the Central Bank of Uzbekistan. It validates the response, normalizes rates by their published nominal values, and uses the resulting rates for the converter and currency cards. UZS is the calculation baseline.
 3. For a conversion, the site calculates `amount × source rate ÷ target rate`. Changing the amount or either currency recalculates the result immediately.
-4. Commercial bank quotes are read from `data/bank-rates.json`; GitHub Actions refreshes the snapshot from Bank.uz every 30 minutes and publishes it with the static site. The browser applies the selected search, filters, and sorting to the downloaded rates.
-5. When a currency card is opened, the browser loads that currency's saved history from `data/history/<CODE>.json`, validates and sorts the points, then adds the latest official rate and date from the live Central Bank rates response before drawing the chart and period statistics. The loaded series is cached in memory while the page remains open.
+4. On GitHub Pages, GitHub Actions downloads commercial bank quotes directly from Bank.uz every 30 minutes and publishes them with the static site. The browser applies the selected search, filters, and sorting.
+5. When a currency card is opened, the browser loads that currency's history, downloaded directly from the Central Bank while GitHub Actions prepares the Pages deployment, then validates and sorts the points before drawing the chart and period statistics. The loaded series is cached in memory while the page remains open.
 6. Language and theme preferences are stored in the browser's local storage. Rates are refreshed when the page becomes visible and at regular intervals while it remains open.
 
-The history handlers in `api/cbu-history.js` and `api/history.js` provide server-side ways to retrieve history from the Central Bank on hosting platforms that support API functions. The static browser interface loads the prepared JSON files and merges in the latest official rate from the live rates response. The `scripts/update-bank-rates.py` GitHub Actions job refreshes the commercial-bank snapshot without requiring a server-side API.
+GitHub Pages is static, so it cannot make server-side requests to Bank.uz or the Central Bank at the time a visitor opens a chart. The `scripts/prepare-pages.py` workflow fetches current rates and all supported histories directly from both official data sources for each deployment; generated data exists only in the temporary Pages artifact, not in the repository. The site refreshes on pushes and every 30 minutes. This is the closest supported update interval on GitHub Pages, not real-time streaming. To load source data on every visitor request, deploy the existing handlers in `api/` on a serverless host instead.
 
 ## 9. Project structure
 
@@ -87,7 +87,7 @@ convertion/
 ├── favicon.svg            # Browser tab icon
 ├── .github/
 │   └── workflows/
-│       └── update-bank-rates.yml # Scheduled commercial-rate refresh
+│       └── deploy-pages.yml # Fetch online data and deploy every 30 minutes
 ├── api/
 │   ├── bank-rates.js      # Server-side Bank.uz quotes handler
 │   ├── cbu-history.js     # Server-side Central Bank history handler
@@ -95,11 +95,8 @@ convertion/
 ├── assets/
 │   ├── app.js             # UI behavior, translations, conversion, and data loading
 │   └── site.css           # Layout, responsive rules, and themes
-├── data/
-│   ├── bank-rates.json    # Commercial bank quote snapshot
-│   └── history/           # Historical rate series, one JSON file per currency
 └── scripts/
-    └── update-bank-rates.py # Fetch and validate Bank.uz quotes for static hosting
+    └── prepare-pages.py   # Fetch online CBU history and Bank.uz rates for deployment
 ```
 
-`api/` contains server-side request handlers and requires a hosting platform that supports them. `data/history/` contains the prepared history files used by the current interface; file names are currency codes, for example `USD.json`. Add or update a history series there using the same JSON structure: an array of objects with a `date` (`YYYY-MM-DD`) and a positive numeric `value`.
+`api/` contains server-side request handlers for a hosting platform that supports them. GitHub Pages deployments require the repository's **Settings → Pages → Build and deployment → Source** to be set to **GitHub Actions**. The workflow creates the data files in its temporary deployment artifact; no historical currency database is stored in the repository.

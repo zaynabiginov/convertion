@@ -56,7 +56,7 @@
         bankFilterMinimum: "Цена от", bankFilterMaximum: "Цена до", bankRatesCount: "Найдено предложений: {count}",
         bankRatesNoResults: "По заданным фильтрам курсы не найдены.",
         bankRatesLoading: "Загружаем курсы банков…", bankRatesError: "Не удалось загрузить или обновить курсы банков. Данные могут быть устаревшими.",
-        bankRatesSource: "Источник: Bank.uz", bankRatesUpdated: "Получено",
+        bankRatesSource: "Источник: Bank.uz", bankRatesUpdated: "Обновлено",
         bankRatesDisclaimer: "Курсы покупки и продажи предоставляет Bank.uz; перед обменом уточняйте курс в банке.",
         ratesNote: "Сумма в валюте → UZS", reverseRatesNote: "Сумма в UZS → валюта",
         rateAmount: "Сумма", reverseRates: "Обратный курс",
@@ -100,7 +100,7 @@
         bankFilterMinimum: "Narxdan", bankFilterMaximum: "Narxgacha", bankRatesCount: "Topilgan takliflar: {count}",
         bankRatesNoResults: "Tanlangan filtrlar bo'yicha kurslar topilmadi.",
         bankRatesLoading: "Bank kurslari yuklanmoqda…", bankRatesError: "Bank kurslarini yuklab yoki yangilab bo'lmadi. Ma'lumotlar eskirgan bo'lishi mumkin.",
-        bankRatesSource: "Manba: Bank.uz", bankRatesUpdated: "Yuklandi",
+        bankRatesSource: "Manba: Bank.uz", bankRatesUpdated: "Yangilandi",
         bankRatesDisclaimer: "Sotib olish va sotish kurslari Bank.uz tomonidan taqdim etilgan; almashtirishdan oldin bankdan aniqlashtiring.",
         ratesNote: "Valyuta miqdori → UZS", reverseRatesNote: "UZS miqdori → valyuta",
         rateAmount: "Miqdor", reverseRates: "Teskari kurs",
@@ -144,7 +144,7 @@
         bankFilterMinimum: "Price from", bankFilterMaximum: "Price to", bankRatesCount: "Offers found: {count}",
         bankRatesNoResults: "No rates match the selected filters.",
         bankRatesLoading: "Loading bank rates…", bankRatesError: "Could not load or refresh bank rates. The displayed data may be stale.",
-        bankRatesSource: "Source: Bank.uz", bankRatesUpdated: "Fetched",
+        bankRatesSource: "Source: Bank.uz", bankRatesUpdated: "Updated",
         bankRatesDisclaimer: "Buy and sell rates are provided by Bank.uz; confirm the rate with the bank before exchanging.",
         ratesNote: "Currency amount → UZS", reverseRatesNote: "UZS amount → currency",
         rateAmount: "Amount", reverseRates: "Reverse rate",
@@ -195,7 +195,7 @@
 
     const apiUrl = "https://cbu.uz/ru/arkhiv-kursov-valyut/json/";
     const bankRatesDataUrl = window.location.protocol === "file:"
-      ? new URL("data/bank-rates.json", window.location.href)
+      ? "https://bank.uz/uz/currency"
       : "/data/bank-rates.json";
     const commercialRateCodes = ["USD", "RUB", "EUR", "GBP", "KZT"];
     const amountInput = document.querySelector("#amount");
@@ -375,6 +375,85 @@
       bankRatesEmpty.hidden = rows.length > 0 || !commercialBankRates.size;
     }
 
+    function parseCommercialRate(value) {
+      const numericText = value.replace(/[^\d,.-]/g, "");
+      const normalized = numericText.includes(",") && !numericText.includes(".")
+        ? numericText.replace(",", ".")
+        : numericText.replace(/,/g, "");
+      const rate = Number(normalized);
+      if (!Number.isFinite(rate) || rate < 0) {
+        throw new Error(`Bank.uz returned an invalid exchange rate: "${value}"`);
+      }
+      return rate;
+    }
+
+    function parseCommercialBankHtml(html) {
+      const sourceDocument = new DOMParser().parseFromString(html, "text/html");
+      const parsedRates = new Map();
+      commercialRateCodes.forEach((code) => {
+        const currencyPanel = sourceDocument.getElementById(`best_${code}`);
+        if (!currencyPanel) throw new Error(`Bank.uz response is missing ${code} rates`);
+
+        [
+          ["buy", ".bc-inner-blocks-left"],
+          ["sell", ".bc-inner-blocks-right"]
+        ].forEach(([rateType, containerSelector]) => {
+          const container = currencyPanel.querySelector(containerSelector);
+          const rows = container?.querySelectorAll(".bc-inner-block-left-texts") || [];
+          if (!rows.length) throw new Error(`Bank.uz response is missing ${rateType} rates for ${code}`);
+
+          rows.forEach((row) => {
+            const bankLink = row.querySelector('a[href*="/currency/bank/"]');
+            const rateElement = row.querySelector(".green-date, .red-date");
+            const bankName = bankLink?.textContent.trim().replace(/\s+/g, " ");
+            const bankSlug = bankLink?.getAttribute("href")?.split("/").filter(Boolean).pop();
+            if (!bankName || !bankSlug || !rateElement) {
+              throw new Error(`Bank.uz returned an incomplete ${rateType} quote for ${code}`);
+            }
+
+            const bank = parsedRates.get(bankSlug) || { name: bankName, rates: {} };
+            bank.rates[code] ||= { buy: null, sell: null };
+            bank.rates[code][rateType] = parseCommercialRate(rateElement.textContent);
+            parsedRates.set(bankSlug, bank);
+          });
+        });
+      });
+      if (!parsedRates.size) throw new Error("Bank.uz response contains no commercial bank rates");
+      return parsedRates;
+    }
+
+    function parseCommercialBankSnapshot(data) {
+      if (!data || !Array.isArray(data.banks) || !data.banks.length) {
+        throw new Error("Commercial bank rates response contains no banks");
+      }
+      const parsedRates = new Map();
+      data.banks.forEach((item) => {
+        if (!item || typeof item.slug !== "string" || !item.slug || typeof item.name !== "string" || !item.name || !item.rates) {
+          throw new Error("Commercial bank rates response contains an invalid bank");
+        }
+        const bank = { name: item.name, rates: {} };
+        commercialRateCodes.forEach((code) => {
+          const quote = item.rates[code];
+          if (quote === undefined) return;
+          if (!quote || typeof quote !== "object") {
+            throw new Error(`Commercial bank rates response contains invalid ${code} rates`);
+          }
+          ["buy", "sell"].forEach((type) => {
+            const rate = quote[type];
+            if (rate !== null && (!Number.isFinite(rate) || rate < 0)) {
+              throw new Error(`Commercial bank rates response contains an invalid ${type} rate for ${code}`);
+            }
+          });
+          bank.rates[code] = { buy: quote.buy, sell: quote.sell };
+        });
+        if (!Object.keys(bank.rates).length) {
+          throw new Error(`Commercial bank rates response contains no supported rates for ${item.slug}`);
+        }
+        parsedRates.set(item.slug, bank);
+      });
+      return parsedRates;
+    }
+
     async function loadCommercialBankRates() {
       if (bankRatesRequestInProgress) return;
       bankRatesRequestInProgress = true;
@@ -384,46 +463,28 @@
         if (!commercialBankRates.size) {
           updateCommercialBankStatus();
         }
-        const response = await fetch(bankRatesDataUrl, {
+        const requestUrl = window.location.protocol === "file:"
+          ? bankRatesDataUrl
+          : `${bankRatesDataUrl}?t=${Date.now()}`;
+        const response = await fetch(requestUrl, {
           cache: "no-store",
           credentials: "omit",
           signal: controller.signal
         });
         if (!response.ok) throw new Error(`Commercial bank rates returned HTTP ${response.status}`);
-        const data = await response.json();
-        if (!data || !Array.isArray(data.banks) || !data.banks.length) {
-          throw new Error("Commercial bank rates response contains no banks");
-        }
-        const parsedRates = new Map();
-
-        data.banks.forEach((item) => {
-          if (!item || typeof item.slug !== "string" || !item.slug || typeof item.name !== "string" || !item.name || !item.rates) {
-            throw new Error("Commercial bank rates response contains an invalid bank");
-          }
-          const bank = { name: item.name, rates: {} };
-          commercialRateCodes.forEach((code) => {
-            const quote = item.rates[code];
-            if (quote === undefined) return;
-            if (!quote || typeof quote !== "object") {
-              throw new Error(`Commercial bank rates response contains invalid ${code} rates`);
-            }
-            ["buy", "sell"].forEach((type) => {
-              const rate = quote[type];
-              if (rate !== null && (!Number.isFinite(rate) || rate < 0)) {
-                throw new Error(`Commercial bank rates response contains an invalid ${type} rate for ${code}`);
-              }
-            });
-            bank.rates[code] = { buy: quote.buy, sell: quote.sell };
-          });
-          if (!Object.keys(bank.rates).length) {
-            throw new Error(`Commercial bank rates response contains no supported rates for ${item.slug}`);
-          }
-          parsedRates.set(item.slug, bank);
-        });
+        const isLocalFile = window.location.protocol === "file:";
+        const data = isLocalFile ? null : await response.json();
+        const parsedRates = isLocalFile
+          ? parseCommercialBankHtml(await response.text())
+          : parseCommercialBankSnapshot(data);
         if (!parsedRates.size) throw new Error("Commercial bank rates response contains no commercial banks");
 
+        const updatedAt = data ? Date.parse(data.updatedAt) : NaN;
+        if (data && !Number.isFinite(updatedAt)) {
+          throw new Error("Commercial bank rates response contains an invalid update time");
+        }
         commercialBankRates = parsedRates;
-        bankRatesFetchedAt = new Date();
+        bankRatesFetchedAt = Number.isFinite(updatedAt) ? new Date(updatedAt) : new Date();
         bankRatesLoadFailed = false;
         renderCommercialBankRates();
         updateCommercialBankStatus();
@@ -1277,8 +1338,8 @@
       const timeoutId = window.setTimeout(() => controller.abort(), 45000);
       try {
         const historyUrl = window.location.protocol === "file:"
-          ? new URL(`data/history/${encodeURIComponent(currency.code)}.json`, window.location.href)
-          : `/data/history/${encodeURIComponent(currency.code)}.json`;
+          ? `https://cbu.uz/common/json/amcharts.php?rate=${encodeURIComponent(currency.code)}`
+          : `/data/history/${encodeURIComponent(currency.code)}.json?t=${Date.now()}`;
         const response = await fetch(historyUrl, { signal: controller.signal });
         if (!response.ok) throw new Error(`Local ${currency.code} history returned HTTP ${response.status}`);
         const data = await response.json();
