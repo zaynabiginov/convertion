@@ -64,12 +64,12 @@
         resultsFound: "Найдено валют: {count}", noRatesFound: "Ничего не найдено. Попробуйте изменить запрос.",
         showAllRates: "Показать все курсы", showLessRates: "Свернуть список",
         themeLight: "Светлая тема", themeDark: "Тёмная тема", languageLabel: "Выбор языка", displayPreferences: "Настройки отображения",
-        international: "Международная расчётная единица", aboutTitle: "Коротко о сайте",
+        international: "Международная расчётная единица", weatherTitle: "Погода в вашем городе", weatherFrameTitle: "Прогноз погоды", aboutTitle: "Коротко о сайте",
         aboutDataTitle: "Источник данных", aboutDataText: "Официальный источник курсов — Центральный банк Республики Узбекистан. Конвертер использует опубликованные им данные для расчётов к узбекскому суму.",
         aboutCurrenciesTitle: "Поддерживаемые валюты", aboutCurrenciesText: "Доступны десятки валют, включая доллар США, евро, российский рубль и валюты стран региона. Курсы можно посмотреть к узбекскому суму.",
         aboutBanksTitle: "Коммерческие банки", aboutBanksText: "Курсы покупки и продажи автоматически загружаются с Bank.uz. Здесь отображаются доступные предложения банков и время получения данных. Перед обменом уточните курс в банке.",
         aboutUsageTitle: "Как пользоваться", aboutUsageText: "Введите сумму и выберите валюты — результат появится автоматически. Нажмите кнопку со стрелками, чтобы поменять направление обмена. Курсы банков можно сравнить в отдельном разделе.",
-        footer: "Курсы валют Центрального банка Узбекистана", githubLink: "Проект на GitHub",
+        footer: "Курсы валют Центрального банка Узбекистана", weatherDataCredit: "Данные погоды:", githubLink: "Проект на GitHub",
         loadingRates: "Загружаем официальный курс…", loadError: "Не удалось загрузить курсы ЦБ. Проверьте подключение и откройте страницу через веб-сервер.",
         invalidAmount: "Введите корректную сумму", noRate: "Курс недоступен", source: "Последний опубликованный курс ЦБ",
         historyTitle: "Динамика курса", historyFrom: "С даты", historyTo: "По дату", historyClose: "Закрыть",
@@ -108,12 +108,12 @@
         resultsFound: "Topilgan valyutalar: {count}", noRatesFound: "Hech narsa topilmadi. Qidiruvni o'zgartirib ko'ring.",
         showAllRates: "Barcha kurslarni ko'rsatish", showLessRates: "Ro'yxatni yig'ish",
         themeLight: "Yorug' mavzu", themeDark: "Qorong'i mavzu", languageLabel: "Tilni tanlash", displayPreferences: "Ko'rinish sozlamalari",
-        international: "Xalqaro hisob-kitob birligi", aboutTitle: "Sayt haqida qisqacha",
+        international: "Xalqaro hisob-kitob birligi", weatherTitle: "Shahringizdagi ob-havo", weatherFrameTitle: "Ob-havo prognozi", aboutTitle: "Sayt haqida qisqacha",
         aboutDataTitle: "Ma'lumotlar manbasi", aboutDataText: "Rasmiy kurslar manbasi — O'zbekiston Respublikasi Markaziy banki. Konvertor so'mga hisoblash uchun bank e'lon qilgan ma'lumotlardan foydalanadi.",
         aboutCurrenciesTitle: "Qo'llab-quvvatlanadigan valyutalar", aboutCurrenciesText: "AQSH dollari, yevro, Rossiya rubli va mintaqa mamlakatlari valyutalarini o'z ichiga olgan o'nlab valyutalar mavjud. Kurslarni o'zbek so'miga nisbatan ko'rish mumkin.",
         aboutBanksTitle: "Tijorat banklari", aboutBanksText: "Sotib olish va sotish kurslari Bank.uz saytidan avtomatik yuklanadi. Bu yerda banklarning mavjud takliflari va ma'lumot olingan vaqt ko'rsatiladi. Ayirboshlashdan oldin kursni bankdan aniqlashtiring.",
         aboutUsageTitle: "Qanday foydalaniladi", aboutUsageText: "Miqdorni kiriting va valyutalarni tanlang — natija avtomatik chiqadi. Ayirboshlash yo'nalishini almashtirish uchun strelkali tugmani bosing. Bank kurslarini alohida bo'limda solishtirish mumkin.",
-        footer: "O'zbekiston Markaziy bankining valyuta kurslari", githubLink: "GitHub loyihasi",
+        footer: "O'zbekiston Markaziy bankining valyuta kurslari", weatherDataCredit: "Ob-havo ma'lumotlari:", githubLink: "GitHub loyihasi",
         loadingRates: "Rasmiy kurs yuklanmoqda…", loadError: "Markaziy bank kurslarini yuklab bo'lmadi. Internetni tekshiring va sahifani veb-server orqali oching.",
         invalidAmount: "To'g'ri miqdorni kiriting", noRate: "Kurs mavjud emas", source: "Markaziy bank e'lon qilgan so'nggi kurs",
         historyTitle: "Valyuta kursi dinamikasi", historyFrom: "Boshlanish sanasi", historyTo: "Tugash sanasi", historyClose: "Yopish",
@@ -152,12 +152,12 @@
         resultsFound: "Currencies found: {count}", noRatesFound: "No currencies found. Try a different search.",
         showAllRates: "Show all rates", showLessRates: "Show fewer",
         themeLight: "Light theme", themeDark: "Dark theme", languageLabel: "Choose language", displayPreferences: "Display settings",
-        international: "International reserve asset", aboutTitle: "About the site",
+        international: "International reserve asset", weatherTitle: "Weather in your city", weatherFrameTitle: "Weather forecast", aboutTitle: "About the site",
         aboutDataTitle: "Data source", aboutDataText: "The official source for exchange rates is the Central Bank of the Republic of Uzbekistan. The converter uses its published data to calculate rates against the Uzbek som.",
         aboutCurrenciesTitle: "Supported currencies", aboutCurrenciesText: "Choose from dozens of currencies, including the US dollar, euro, Russian ruble, and currencies from the region. Rates are shown against the Uzbek som.",
         aboutBanksTitle: "Commercial banks", aboutBanksText: "Bank buy and sell rates are retrieved automatically from Bank.uz. Available bank offers and the time the data was fetched are shown here. Confirm the rate with the bank before exchanging.",
         aboutUsageTitle: "How to use", aboutUsageText: "Enter an amount and choose currencies to see the result instantly. Use the arrow button to swap the conversion direction. Compare bank rates in the dedicated section.",
-        footer: "Central Bank of Uzbekistan exchange rates", githubLink: "View on GitHub",
+        footer: "Central Bank of Uzbekistan exchange rates", weatherDataCredit: "Weather data:", githubLink: "View on GitHub",
         loadingRates: "Loading official exchange rates…", loadError: "Could not load Central Bank rates. Check your connection and open this page through a web server.",
         invalidAmount: "Enter a valid amount", noRate: "Rate unavailable", source: "Latest rate published by the Central Bank",
         historyTitle: "Exchange rate history", historyFrom: "From date", historyTo: "To date", historyClose: "Close",
@@ -242,7 +242,15 @@
     const historyScrollEnd = document.querySelector("#history-scroll-end");
     const languageSelect = document.querySelector("#language-select");
     const themeToggle = document.querySelector("#theme-toggle");
+    const weatherThemeFrame = document.querySelector("#weather-frame");
     document.querySelector("#current-year").textContent = String(new Date().getFullYear());
+    function syncViewportWidth() {
+      document.documentElement.style.setProperty("--viewport-width", `${document.documentElement.clientWidth}px`);
+    }
+
+    syncViewportWidth();
+    window.addEventListener("resize", syncViewportWidth);
+
     const localeCodes = { ru: "ru-RU", uz: "uz-UZ", en: "en-US" };
     let activeLanguage = readPreference("convertion-language", ["ru", "uz", "en"], "ru");
     let officialRateDate = null;
@@ -280,8 +288,20 @@
       themeToggle.setAttribute("aria-label", translations[activeLanguage][light ? "themeLight" : "themeDark"]);
       themeToggle.setAttribute("aria-checked", String(light));
       document.querySelector('meta[name="theme-color"]').content = light ? "#f5f7fb" : "#101a2d";
+      weatherThemeFrame.contentWindow?.postMessage({
+        type: "weather-frame-settings",
+        theme: light ? "light" : "dark",
+        language: activeLanguage
+      }, "*");
     }
 
+    weatherThemeFrame.addEventListener("load", () => {
+      weatherThemeFrame.contentWindow.postMessage({
+        type: "weather-frame-settings",
+        theme: document.documentElement.dataset.theme,
+        language: activeLanguage
+      }, "*");
+    });
     applyTheme(readPreference("convertion-theme", ["light", "dark"], "dark"));
 
     function formatNumber(value, options) {
@@ -1410,6 +1430,10 @@
       document.title = `${translations[language].pageTitle} — convertion.uz`;
       document.querySelectorAll("[data-i18n]").forEach((element) => {
         const key = element.dataset.i18n;
+        if (translations[language][key]) element.textContent = translations[language][key];
+      });
+      document.querySelectorAll("[data-i18n-content]").forEach((element) => {
+        const key = element.dataset.i18nContent;
         if (translations[language][key]) element.textContent = translations[language][key];
       });
       document.querySelectorAll("[data-i18n-aria]").forEach((element) => {

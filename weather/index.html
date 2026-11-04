@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Погода</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌤️</text></svg>">
+</head>
+<body>
+    <header class="header">
+        <div class="container header__container">
+            <div class="header__logo">
+                <span class="header__logo-icon">🌤️</span>
+                <span class="header__logo-text" data-weather-i18n="weather">Погода</span>
+            </div>
+            <div class="header__search">
+                <svg class="header__search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="2"/>
+                    <path d="M14 14L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <input type="text" id="citySearch" class="header__search-input" placeholder="Найти город..." data-weather-placeholder="searchCity" autocomplete="off">
+                <div class="header__search-dropdown" id="searchDropdown"></div>
+            </div>
+            <button class="header__location-btn" id="locationBtn" title="Определить местоположение" data-weather-title="locate">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="2"/>
+                    <path d="M10 1V3M10 17V19M19 10H17M3 10H1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <section class="current-weather">
+                <div class="current-weather__header">
+                    <h1 class="current-weather__city" id="currentCity">Загрузка...</h1>
+                    <div class="current-weather__time" id="currentTime"></div>
+                    <p class="current-weather__status" id="locationStatus" role="status" aria-live="polite" hidden></p>
+                </div>
+                <div class="current-weather__main">
+                    <div class="current-weather__temp-block">
+                        <div class="current-weather__icon" id="currentIcon">🌤️</div>
+                        <div class="current-weather__temp" id="currentTemp">--°</div>
+                    </div>
+                    <div class="current-weather__info">
+                        <div class="current-weather__description" id="currentDescription">--</div>
+                        <div class="current-weather__feels-like">
+                            <span data-weather-i18n="feelsLike">Ощущается как</span> <span id="feelsLike">--°</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="current-weather__details">
+                    <div class="detail-card">
+                        <svg class="detail-card__icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <div class="detail-card__content">
+                            <div class="detail-card__label" data-weather-i18n="wind">Ветер</div>
+                            <div class="detail-card__value" id="windSpeed">-- м/с</div>
+                        </div>
+                    </div>
+                    <div class="detail-card">
+                        <svg class="detail-card__icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <div class="detail-card__content">
+                            <div class="detail-card__label" data-weather-i18n="humidity">Влажность</div>
+                            <div class="detail-card__value" id="humidity">-- %</div>
+                        </div>
+                    </div>
+                    <div class="detail-card">
+                        <svg class="detail-card__icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                            <path d="M12 1v6m0 6v6M23 12h-6m-6 0H1" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <div class="detail-card__content">
+                            <div class="detail-card__label" data-weather-i18n="pressure">Давление</div>
+                            <div class="detail-card__value" id="pressure">-- мм рт.ст.</div>
+                        </div>
+                    </div>
+                    <div class="detail-card">
+                        <svg class="detail-card__icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M18 8h-1V6a6 6 0 0 0-12 0v2H4a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1zM8 6a4 4 0 0 1 8 0v2H8V6z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <div class="detail-card__content">
+                            <div class="detail-card__label" data-weather-i18n="precipitation">Осадки</div>
+                            <div class="detail-card__value" id="precipitation">-- мм</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="hourly-forecast">
+                <h2 class="section-title" data-weather-i18n="hourlyForecast">Почасовой прогноз</h2>
+                <div class="hourly-forecast__scroll" id="hourlyForecast"></div>
+            </section>
+
+            <section class="daily-forecast">
+                <h2 class="section-title" data-weather-i18n="dailyForecast">Прогноз на 7 дней</h2>
+                <div class="daily-forecast__list" id="dailyForecast"></div>
+            </section>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>

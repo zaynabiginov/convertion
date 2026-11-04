@@ -1,102 +1,92 @@
-# Convertion.uz Currency Converter — User Guide
+# Convertion.uz
+
+Currency converter and weather forecast for Uzbekistan and other locations.
 
 [English](README.md) | [Русский](READMEru.md) | [O‘zbekcha](READMEuz.md)
 
-## 1. About the service
+## Features
 
-Convertion.uz calculates amounts in Uzbekistani som and other supported currencies, displays official exchange rates from the Central Bank of the Republic of Uzbekistan, and lets you compare commercial bank quotes. Rates are retrieved online, so an internet connection is required. If the page or rates do not load, open the website in a browser using its web address. Opening the file directly from your computer (`file://`) may prevent some data from loading.
+- Convert between Uzbekistani som (UZS) and supported currencies using exchange rates from the Central Bank of the Republic of Uzbekistan.
+- Browse currency cards, search by country or currency, and view historical rates with chart statistics.
+- Compare commercial bank buy and sell offers with search, filters, and sorting.
+- Check current conditions, an hourly forecast, and a seven-day forecast. Each day includes morning, daytime, evening, and night details.
+- Search for a city or use your current location. The weather page requests location access when it loads; the browser will ask for permission.
+- Switch between Russian, Uzbek, and English, and between dark and light themes.
 
-## 2. Choose a language and appearance
+## Run locally
 
-- Select **UZ / RU / EN** in the upper-right corner to change the interface language.
-- The moon represents the dark theme and the sun represents the light theme. Use the adjacent switch to change the theme.
-- Your language and theme choices are saved in the current browser. You may need to select them again in another browser or on another device.
+Serve the project directory over HTTP instead of opening `index.html` directly. On Windows, run one of these commands from the project directory:
 
-## 3. Convert currencies
+```powershell
+py -m http.server 8000
+# Or, if the Python launcher is unavailable:
+python -m http.server 8000
+```
 
-1. Enter an amount in the **Amount** field. Negative values are not accepted; decimal amounts are supported.
-2. Choose the source and target currencies from the **From** and **To** lists. Type a currency code or name in the search field to find it.
-3. The result updates automatically. The applied exchange rate and the official rate date appear below the result.
-4. Click the arrow button between the currencies to reverse the conversion direction. The amount stays the same while the source and target currencies switch places.
+Open [http://localhost:8000](http://localhost:8000) in a browser. No package installation or build step is required.
 
-Choose **UZS** to convert to or from Uzbekistani som. When two foreign currencies are selected, the converter calculates the result using their Central Bank rates. Number formatting follows the selected interface language.
+Geolocation is available on HTTPS sites and localhost. Allow location access when prompted; if access is denied or unavailable, the forecast falls back to Tashkent. You can try again with the location button or search for a city. Coordinates are used to request the forecast and resolve the city name through Open-Meteo.
 
-## 4. Central Bank rates
+## Use the converter
 
-The **Central Bank rates** section contains cards for available currencies.
+1. Enter an amount and select the source and target currencies. Search the currency lists by name or code.
+2. The result updates as you type. Use the swap button to reverse the conversion.
+3. Search and adjust the amount shown in the Central Bank rate cards. Select a card to open its historical chart.
+4. In commercial bank rates, filter by bank, currency, buy/sell price, and price range; select a table heading to sort. Buy and sell are from the bank's perspective: compare **Sell** when buying foreign currency from a bank and **Buy** when selling it to a bank.
+5. In the history dialog, choose a date range or preset, inspect chart points, zoom, and review period statistics.
 
-- Each card shows the currency code and name, country, and calculated amount.
-- Search by country, currency name, or code.
-- The page initially shows a selection of common currencies. Click **Show all rates** to expand the list; click it again to collapse the list. When searching, matching results are shown.
-- The **Amount** field controls the quantity calculated on every card. An invalid or negative amount will not produce a displayed calculation.
-- The **Reverse rate** switch changes the displayed direction: the default view converts a foreign-currency amount to UZS; the reverse view converts an amount in UZS to foreign currency.
+Language and theme preferences are saved in the current browser.
 
-Click a currency card to open its exchange-rate history.
+## Weather
 
-## 5. View exchange-rate history
+The weather section is embedded on the main page and can also be opened directly at `weather/index.html`. It shows current conditions, the next 24 hours, and seven days of forecasts. Daily details include temperature, feels-like temperature, wind, humidity, pressure, daylight, sunrise and sunset, UV index, and moon phase. Geomagnetic Kp data is provided by NOAA when available.
 
-The history dialog displays a chart of the selected currency's Central Bank rates and statistics for the selected period.
+The location button can request the browser's current location again. If you do not grant permission, the site continues to show Tashkent and lets you search for another city. Location access may be unavailable when the site is opened as a local `file://` document or served from an insecure non-local origin.
 
-1. Set the **From date** and **To date**, or choose a preset: 1, 3, or 6 months; 1, 3, 5, or 7 years; or **All**.
-2. The start date must be earlier than the end date. If no rates were published during the selected period, the chart will have no data to display.
-3. Hover over a chart point to inspect its date and value. Use the mouse wheel to zoom and drag the chart to pan across the time range.
-4. Use **+ / −** to zoom in or out. **Reset zoom** restores the original view. The horizontal scrollbar below the chart also moves through the time range.
-5. Drag the dialog's lower-right corner to resize it. Click **Close** when you are done.
+## Data sources
 
-The statistics show the latest value, minimum, maximum, average, and change over the selected period.
+- Central Bank of the Republic of Uzbekistan — official exchange rates and rate history.
+- Bank.uz — commercial bank currency offers.
+- Open-Meteo — geocoding and weather forecasts.
+- NOAA Space Weather Prediction Center — geomagnetic Kp forecast.
 
-## 6. Commercial bank rates
+Weather and exchange-rate data require an internet connection. Providers may be temporarily unavailable; Kp data may not cover every forecast date.
 
-Open **Commercial bank rates** to view buy and sell quotes provided by Bank.uz. Narrow the table using:
+## Prepare a static deployment
 
-- a bank-name search;
-- a currency filter for USD, RUB, EUR, GBP, or KZT, or select all currencies;
-- the price type: **Buy** or **Sell**;
-- minimum and maximum price limits for the selected price type. Either limit may be left blank;
-- sorting by bank, currency, buy price, or sell price. Click a table heading; click it again to reverse the sort order.
+The project has no runtime package dependencies. To prepare an updated static site with current bank rates, Central Bank rate histories, and the weather page, run:
 
-**Important:** buy and sell are stated from the bank's perspective. If you are buying foreign currency from a bank, compare the **Sell** price. If you are selling foreign currency to a bank, compare the **Buy** price. The data retrieval time appears near the table. Quotes can change, so confirm the rate with the bank before exchanging money. Source: Bank.uz.
+```powershell
+python scripts/prepare-pages.py --output .\pages-output
+```
 
-## 7. Data sources and troubleshooting
+The output directory must be new or empty. The script downloads source data and assembles the site; deploy the contents of that directory to a static host. Serve the deployed site over HTTPS so browsers can offer geolocation access.
 
-- Official currency rates come from the Central Bank of the Republic of Uzbekistan; commercial bank quotes come from Bank.uz. The two sources may show different values.
-- Results are for informational purposes. The final exchange amount may differ because of bank terms, fees, or rate changes.
-- If a loading error or **Rate unavailable** message appears, check your internet connection, reload the page, and try again later. A data provider may also be temporarily unavailable.
-- If the bank table is empty, clear the search and filters, select **All currencies**, and check the minimum and maximum price limits.
-- If the history chart does not load, try again later or select a wider date range.
+The optional handlers in `api/` are for serverless hosts that support server-side functions. GitHub Pages does not run those handlers.
 
-## 8. How the website works
-
-1. The browser loads `index.html`, then applies the styles from `assets/site.css` and runs `assets/app.js`.
-2. The JavaScript requests the current currency list from the Central Bank of Uzbekistan. It validates the response, normalizes rates by their published nominal values, and uses the resulting rates for the converter and currency cards. UZS is the calculation baseline.
-3. For a conversion, the site calculates `amount × source rate ÷ target rate`. Changing the amount or either currency recalculates the result immediately.
-4. On GitHub Pages, GitHub Actions downloads commercial bank quotes directly from Bank.uz every 30 minutes and publishes them with the static site. The browser applies the selected search, filters, and sorting.
-5. When a currency card is opened, the browser loads that currency's history, downloaded directly from the Central Bank while GitHub Actions prepares the Pages deployment, then validates and sorts the points before drawing the chart and period statistics. The loaded series is cached in memory while the page remains open.
-6. Language and theme preferences are stored in the browser's local storage. Rates are refreshed when the page becomes visible and at regular intervals while it remains open.
-
-GitHub Pages is static, so it cannot make server-side requests to Bank.uz or the Central Bank at the time a visitor opens a chart. The `scripts/prepare-pages.py` workflow fetches current rates and all supported histories directly from both official data sources for each deployment; generated data exists only in the temporary Pages artifact, not in the repository. The site refreshes on pushes and every 30 minutes. This is the closest supported update interval on GitHub Pages, not real-time streaming. To load source data on every visitor request, deploy the existing handlers in `api/` on a serverless host instead.
-
-## 9. Project structure
+## Project structure
 
 ```text
 convertion/
-├── index.html             # Page structure and interface elements
-├── README.md              # English user guide and project overview
-├── READMEru.md            # Russian user guide and project overview
-├── READMEuz.md            # Uzbek user guide and project overview
-├── favicon.svg            # Browser tab icon
-├── .github/
-│   └── workflows/
-│       └── deploy-pages.yml # Fetch online data and deploy every 30 minutes
-├── api/
-│   ├── bank-rates.js      # Server-side Bank.uz quotes handler
-│   ├── cbu-history.js     # Server-side Central Bank history handler
-│   └── history.js         # Alternative Central Bank history handler
+├── index.html
 ├── assets/
-│   ├── app.js             # UI behavior, translations, conversion, and data loading
-│   └── site.css           # Layout, responsive rules, and themes
-└── scripts/
-    └── prepare-pages.py   # Fetch online CBU history and Bank.uz rates for deployment
+│   ├── app.js
+│   └── site.css
+├── weather/
+│   ├── index.html
+│   ├── app.js
+│   └── style.css
+├── data/
+│   ├── bank-rates.json
+│   └── history/
+├── api/
+│   ├── bank-rates.js
+│   ├── cbu-history.js
+│   └── history.js
+├── scripts/
+│   ├── prepare-pages.py
+│   └── update-bank-rates.py
+├── README.md
+├── READMEru.md
+└── READMEuz.md
 ```
-
-`api/` contains server-side request handlers for a hosting platform that supports them. GitHub Pages deployments require the repository's **Settings → Pages → Build and deployment → Source** to be set to **GitHub Actions**. The workflow creates the data files in its temporary deployment artifact; no historical currency database is stored in the repository.

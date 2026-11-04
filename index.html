@@ -22,7 +22,14 @@
         <span>convertion.uz</span>
       </a>
       <div class="header-actions">
-        <div class="header-preferences" role=c:\Users\Рахматулло\AppData\Local\Packages\MicrosoftWindows.Client.Core_cw5n1h2txyewy\TempState\ScreenClip\{0651DC11-9F03-4CFB-A78F-D96548849EB0}.png"group" aria-label="Настройки отображения" data-i18n-aria="displayPreferences">
+        <a class="weather-nav-link" href="#weather-section" aria-label="Погода в вашем городе" title="Погода в вашем городе" data-i18n-aria="weatherTitle" data-i18n-title="weatherTitle">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="16.5" cy="7.5" r="3.5" fill="#f5b942"/>
+            <path d="M6.5 19a4 4 0 1 1 .7-7.94A5 5 0 0 1 17 12a3.5 3.5 0 0 1-.5 7H6.5Z" fill="#7db7f5"/>
+            <path d="M16.5 2.5v-1m4.54 1.96.71-.71m1.75 4.75h1m-8-6-.71-.71" stroke="#f5b942" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </a>
+        <div class="header-preferences" role="group" aria-label="Настройки отображения" data-i18n-aria="displayPreferences">
           <div class="language-control" role="group" aria-label="Выбор языка" data-i18n-aria="languageLabel">
             <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
               <circle cx="10" cy="10" r="7.1" stroke="currentColor" stroke-width="1.5"/>
@@ -270,6 +277,27 @@
         </div>
       </dialog>
 
+      <section class="weather-section" id="weather-section" aria-labelledby="weather-title">
+        <h2 id="weather-title" data-i18n="weatherTitle">Погода в вашем городе</h2>
+        <iframe
+          class="weather-frame"
+          id="weather-frame"
+          src="weather/index.html"
+          title="Прогноз погоды"
+          data-i18n-title="weatherFrameTitle"
+          allow="geolocation"
+          height="900"
+          scrolling="no"
+        ></iframe>
+        <script>
+          const weatherFrame = document.querySelector("#weather-frame");
+          window.addEventListener("message", (event) => {
+            if (event.source !== weatherFrame.contentWindow || !event.data || event.data.type !== "weather-frame-height") return;
+            if (Number.isFinite(event.data.height)) weatherFrame.style.height = `${Math.ceil(event.data.height)}px`;
+          });
+        </script>
+      </section>
+
       <section class="about-section" aria-labelledby="about-title">
         <h2 id="about-title" data-i18n="aboutTitle">Коротко о сайте</h2>
         <div class="about-grid">
@@ -320,6 +348,8 @@
         <span>© 2025–<span id="current-year"></span> convertion.uz</span>
         <span class="footer-separator" aria-hidden="true">·</span>
         <span data-i18n="footer">Курсы валют Центрального банка Узбекистана</span>
+        <span class="footer-separator" aria-hidden="true">·</span>
+        <span><span data-i18n-content="weatherDataCredit">Данные погоды:</span> <a class="weather-source" href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a></span>
       </p>
       <a class="footer-github" href="https://github.com/zaynabiginov/convertion" target="_blank" rel="noopener noreferrer" data-i18n-aria="githubLink" aria-label="Открыть проект Convertion.uz на GitHub">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
