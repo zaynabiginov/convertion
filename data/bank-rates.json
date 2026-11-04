@@ -1,0 +1,32 @@
+{
+  "banks": [
+    { "slug": "tenge-bank", "name": "Tenge Bank", "rates": { "USD": { "buy": 11900, "sell": 11960 }, "RUB": { "buy": 80, "sell": 147 }, "EUR": { "buy": 12940, "sell": 13540 }, "GBP": { "buy": 15500, "sell": 16500 }, "KZT": { "buy": 26, "sell": 26.9 } } },
+    { "slug": "asia-alliance-bank", "name": "Asia Alliance Bank", "rates": { "USD": { "buy": 11900, "sell": 11970 }, "RUB": { "buy": 120, "sell": 148 }, "EUR": { "buy": 13250, "sell": 13400 }, "GBP": { "buy": 15660, "sell": 16460 } } },
+    { "slug": "ziraat-bank-uzbekistan", "name": "Ziraat Bank", "rates": { "USD": { "buy": 11890, "sell": 11970 } } },
+    { "slug": "nbu", "name": "O‘zbekiston Milliy banki", "rates": { "USD": { "buy": 11870, "sell": 11960 }, "RUB": { "buy": 115, "sell": 150 }, "EUR": { "buy": 13170, "sell": 13370 }, "GBP": { "buy": 15770, "sell": 16280 }, "KZT": { "buy": 16, "sell": 27 } } },
+    { "slug": "invest-finance-bank", "name": "Infinbank", "rates": { "USD": { "buy": 11870, "sell": 11960 }, "RUB": { "buy": 90, "sell": 150 }, "EUR": { "buy": 12500, "sell": 14000 }, "GBP": { "buy": 14500, "sell": 16500 } } },
+    { "slug": "smartbank", "name": "Openbank", "rates": { "USD": { "buy": 11870, "sell": 11950 } } },
+    { "slug": "apexbank", "name": "APEXBANK", "rates": { "USD": { "buy": 11870, "sell": 11960 }, "RUB": { "buy": 30, "sell": 147 }, "EUR": { "buy": 12500, "sell": 13900 } } },
+    { "slug": "kapitalbank", "name": "Kapitalbank", "rates": { "USD": { "buy": 11865, "sell": 11945 }, "RUB": { "buy": 118, "sell": 145 }, "EUR": { "buy": 12890, "sell": 13440 }, "GBP": { "buy": 15330, "sell": 16460 }, "KZT": { "buy": 24, "sell": 27 } } },
+    { "slug": "sanoat-qurilish-bank", "name": "O‘zsanoatqurilishbank", "rates": { "USD": { "buy": 11860, "sell": 11970 }, "RUB": { "buy": 0, "sell": 147 }, "EUR": { "buy": 13250, "sell": 13600 }, "GBP": { "buy": 15700, "sell": 16300 } } },
+    { "slug": "hayot-bank", "name": "Hayot Bank", "rates": { "USD": { "buy": 11860, "sell": 11950 }, "RUB": { "buy": 70, "sell": 147 }, "EUR": { "buy": 12900, "sell": 13500 }, "GBP": { "buy": 15300, "sell": 16500 }, "KZT": { "buy": 10, "sell": 27 } } },
+    { "slug": "ipakyulibank", "name": "Ipak Yuli Bank", "rates": { "USD": { "buy": 11860, "sell": 11960 }, "RUB": { "buy": 80, "sell": 150 }, "EUR": { "buy": 12700, "sell": 13340 }, "GBP": { "buy": 15230, "sell": 16070 } } },
+    { "slug": "hamkorbank", "name": "Hamkorbank", "rates": { "USD": { "buy": 11860, "sell": 11970 } } },
+    { "slug": "asaka-bank", "name": "Asakabank", "rates": { "USD": { "buy": 11860, "sell": 11970 }, "RUB": { "buy": 0, "sell": 147 }, "EUR": { "buy": 13100, "sell": 14150 }, "GBP": { "buy": 15500, "sell": 16500 } } },
+    { "slug": "xalq-bank", "name": "Xalq Banki", "rates": { "USD": { "buy": 11860, "sell": 11920 }, "RUB": { "buy": 50, "sell": 147 }, "EUR": { "buy": 12500, "sell": 13400 }, "GBP": { "buy": 13000, "sell": 19000 }, "KZT": { "buy": 15, "sell": 27 } } },
+    { "slug": "turonbank", "name": "Turon bank", "rates": { "USD": { "buy": 11860, "sell": 11970 }, "RUB": { "buy": 80, "sell": 147 }, "EUR": { "buy": 12500, "sell": 14500 }, "GBP": { "buy": 15000, "sell": 17000 } } },
+    { "slug": "universalbank", "name": "Universal bank", "rates": { "USD": { "buy": 11860, "sell": 11970 }, "EUR": { "buy": 13000, "sell": 15000 }, "GBP": { "buy": 15200, "sell": 18000 } } },
+    { "slug": "ravnaq-bank", "name": "Octobank", "rates": { "USD": { "buy": 11860, "sell": 11960 }, "RUB": { "buy": 80, "sell": 148 }, "EUR": { "buy": 13150, "sell": 13420 }, "GBP": { "buy": 15700, "sell": 16200 } } },
+    { "slug": "trastbank", "name": "Trastbank", "rates": { "USD": { "buy": 11860, "sell": 11970 }, "RUB": { "buy": 90, "sell": 152 }, "EUR": { "buy": 12800, "sell": 13400 }, "GBP": { "buy": 15650, "sell": 16300 } } },
+    { "slug": "poytaxtbank", "name": "Poytaxt bank", "rates": { "USD": { "buy": 11855, "sell": 11940 }, "RUB": { "buy": 50, "sell": 170 }, "EUR": { "buy": 12800, "sell": 13600 }, "GBP": { "buy": 14500, "sell": 17500 } } },
+    { "slug": "ipoteka-bank", "name": "Ipoteka bank", "rates": { "USD": { "buy": 11855, "sell": 11945 }, "RUB": { "buy": 50, "sell": 150 }, "EUR": { "buy": 12700, "sell": 13750 }, "GBP": { "buy": 13700, "sell": 17100 } } },
+    { "slug": "anor-bank", "name": "Anorbank", "rates": { "USD": { "buy": 11855, "sell": 11925 }, "RUB": { "buy": 40, "sell": 151 }, "EUR": { "buy": 13060, "sell": 13460 }, "GBP": { "buy": 15220, "sell": 16780 }, "KZT": { "buy": 17, "sell": 29 } } },
+    { "slug": "orient-finans-bank", "name": "Orient Finans Bank", "rates": { "USD": { "buy": 11855, "sell": 11930 }, "RUB": { "buy": 100, "sell": 147 }, "EUR": { "buy": 12900, "sell": 13700 }, "GBP": { "buy": 14800, "sell": 18000 } } },
+    { "slug": "uzkdb-bank", "name": "KDB Bank Uzbekiston", "rates": { "USD": { "buy": 11855, "sell": 11970 }, "EUR": { "buy": 13000, "sell": 13700 } } },
+    { "slug": "aloqabank", "name": "Aloqabank", "rates": { "USD": { "buy": 11855, "sell": 11920 }, "RUB": { "buy": 95, "sell": 180 }, "EUR": { "buy": 13000, "sell": 14000 }, "GBP": { "buy": 15500, "sell": 16500 } } },
+    { "slug": "savdogar-bank", "name": "Garant bank", "rates": { "USD": { "buy": 11855, "sell": 11955 }, "RUB": { "buy": 50, "sell": 180 }, "EUR": { "buy": 12800, "sell": 15000 }, "GBP": { "buy": 14800, "sell": 17700 } } },
+    { "slug": "mikrokreditbank", "name": "MKBank", "rates": { "USD": { "buy": 11855, "sell": 11970 }, "EUR": { "buy": 12700, "sell": 13700 }, "GBP": { "buy": 15500, "sell": 16500 } } },
+    { "slug": "agrobank", "name": "Agrobank", "rates": { "USD": { "buy": 11840, "sell": 11950 }, "EUR": { "buy": 13100, "sell": 13600 }, "GBP": { "buy": 15300, "sell": 16400 } } },
+    { "slug": "qishloq-qurilish-bank", "name": "BRB", "rates": { "RUB": { "buy": 50, "sell": 150 }, "EUR": { "buy": 12900, "sell": 13600 }, "GBP": { "buy": 15500, "sell": 16200 } } }
+  ]
+}

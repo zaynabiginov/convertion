@@ -194,9 +194,9 @@
     }
 
     const apiUrl = "https://cbu.uz/ru/arkhiv-kursov-valyut/json/";
-    const bankRatesApiUrl = window.location.protocol === "file:"
-      ? "https://bank.uz/uz/currency"
-      : "/api/bank-rates";
+    const bankRatesDataUrl = window.location.protocol === "file:"
+      ? new URL("data/bank-rates.json", window.location.href)
+      : "/data/bank-rates.json";
     const commercialRateCodes = ["USD", "RUB", "EUR", "GBP", "KZT"];
     const amountInput = document.querySelector("#amount");
     const fromSelect = document.querySelector("#from-currency");
@@ -375,18 +375,6 @@
       bankRatesEmpty.hidden = rows.length > 0 || !commercialBankRates.size;
     }
 
-    function parseCommercialRate(value) {
-      const numericText = value.replace(/[^\d,.-]/g, "");
-      const normalized = numericText.includes(",") && !numericText.includes(".")
-        ? numericText.replace(",", ".")
-        : numericText.replace(/,/g, "");
-      const rate = Number(normalized);
-      if (!Number.isFinite(rate) || rate < 0) {
-        throw new Error(`Bank.uz returned an invalid exchange rate: "${value}"`);
-      }
-      return rate;
-    }
-
     async function loadCommercialBankRates() {
       if (bankRatesRequestInProgress) return;
       bankRatesRequestInProgress = true;
@@ -396,45 +384,43 @@
         if (!commercialBankRates.size) {
           updateCommercialBankStatus();
         }
-        const response = await fetch(bankRatesApiUrl, {
+        const response = await fetch(bankRatesDataUrl, {
           cache: "no-store",
           credentials: "omit",
           signal: controller.signal
         });
-        if (!response.ok) throw new Error(`Bank.uz returned HTTP ${response.status}`);
-        const html = await response.text();
-        const sourceDocument = new DOMParser().parseFromString(html, "text/html");
+        if (!response.ok) throw new Error(`Commercial bank rates returned HTTP ${response.status}`);
+        const data = await response.json();
+        if (!data || !Array.isArray(data.banks) || !data.banks.length) {
+          throw new Error("Commercial bank rates response contains no banks");
+        }
         const parsedRates = new Map();
 
-        commercialRateCodes.forEach((code) => {
-          const currencyPanel = sourceDocument.getElementById(`best_${code}`);
-          if (!currencyPanel) throw new Error(`Bank.uz response is missing ${code} rates`);
-
-          [
-            ["buy", ".bc-inner-blocks-left"],
-            ["sell", ".bc-inner-blocks-right"]
-          ].forEach(([rateType, containerSelector]) => {
-            const container = currencyPanel.querySelector(containerSelector);
-            const rows = container?.querySelectorAll(".bc-inner-block-left-texts") || [];
-            if (!rows.length) throw new Error(`Bank.uz response is missing ${rateType} rates for ${code}`);
-
-            rows.forEach((row) => {
-              const bankLink = row.querySelector('a[href*="/currency/bank/"]');
-              const rateElement = row.querySelector(".green-date, .red-date");
-              const bankName = bankLink?.textContent.trim().replace(/\s+/g, " ");
-              const bankSlug = bankLink?.getAttribute("href")?.split("/").filter(Boolean).pop();
-              if (!bankName || !bankSlug || !rateElement) {
-                throw new Error(`Bank.uz returned an incomplete ${rateType} quote for ${code}`);
+        data.banks.forEach((item) => {
+          if (!item || typeof item.slug !== "string" || !item.slug || typeof item.name !== "string" || !item.name || !item.rates) {
+            throw new Error("Commercial bank rates response contains an invalid bank");
+          }
+          const bank = { name: item.name, rates: {} };
+          commercialRateCodes.forEach((code) => {
+            const quote = item.rates[code];
+            if (quote === undefined) return;
+            if (!quote || typeof quote !== "object") {
+              throw new Error(`Commercial bank rates response contains invalid ${code} rates`);
+            }
+            ["buy", "sell"].forEach((type) => {
+              const rate = quote[type];
+              if (rate !== null && (!Number.isFinite(rate) || rate < 0)) {
+                throw new Error(`Commercial bank rates response contains an invalid ${type} rate for ${code}`);
               }
-
-              const bank = parsedRates.get(bankSlug) || { name: bankName, rates: {} };
-              bank.rates[code] ||= { buy: null, sell: null };
-              bank.rates[code][rateType] = parseCommercialRate(rateElement.textContent);
-              parsedRates.set(bankSlug, bank);
             });
+            bank.rates[code] = { buy: quote.buy, sell: quote.sell };
           });
+          if (!Object.keys(bank.rates).length) {
+            throw new Error(`Commercial bank rates response contains no supported rates for ${item.slug}`);
+          }
+          parsedRates.set(item.slug, bank);
         });
-        if (!parsedRates.size) throw new Error("Bank.uz response contains no commercial bank rates");
+        if (!parsedRates.size) throw new Error("Commercial bank rates response contains no commercial banks");
 
         commercialBankRates = parsedRates;
         bankRatesFetchedAt = new Date();

@@ -70,11 +70,11 @@ Statistikada so‘nggi qiymat, minimum, maksimum, o‘rtacha qiymat va tanlangan
 1. Brauzer `index.html` faylini yuklaydi, so‘ng `assets/site.css` uslublarini qo‘llaydi va `assets/app.js` skriptini ishga tushiradi.
 2. JavaScript O‘zbekiston Markaziy bankidan joriy valyuta kurslarini so‘raydi. Javob tekshiriladi va kurslar e’lon qilingan nominalga bo‘linib normallashtiriladi. Konvertor va valyuta kartochkalari shu ma’lumotlardan foydalanadi; hisoblashning asosiy valyutasi — UZS.
 3. Konvertatsiya `summa × boshlang‘ich valyuta kursi ÷ maqsadli valyuta kursi` formulasi bilan hisoblanadi. Summa yoki valyuta o‘zgarsa, natija avtomatik yangilanadi.
-4. Tijorat banklari takliflari `/api/bank-rates` manzilidan olinadi. `api/bank-rates.js` server ishlov beruvchisi Bank.uz sahifasini yuklaydi; brauzer undan kurslarni ajratib olib, tanlangan qidiruv, filtr va saralashni qo‘llaydi.
+4. Tijorat banklari kurslari `data/bank-rates.json` faylidan yuklanadi. GitHub Actions har 30 daqiqada Bank.uz ma’lumotlari bilan faylni yangilab, statik sayt bilan birga e’lon qiladi. Brauzer tanlangan qidiruv, filtr va saralashni qo‘llaydi.
 5. Valyuta kartochkasi ochilganda, brauzer uning saqlangan tarixini `data/history/<KOD>.json` faylidan yuklaydi, nuqtalarni tekshiradi va saralaydi, Markaziy bankning joriy javobidan eng so‘nggi rasmiy kurs va sanani qo‘shadi, so‘ng grafik hamda davr statistikasini chizadi. Yuklangan qator sahifa ochiq turgan vaqt davomida xotirada saqlanadi.
 6. Til va mavzu sozlamalari brauzerning mahalliy xotirasida saqlanadi. Sahifaga qaytilganda va sahifa ko‘rinib turgan paytda muntazam ravishda kurslar yangilanadi.
 
-`api/cbu-history.js` va `api/history.js` ishlov beruvchilari API funksiyalarini qo‘llab-quvvatlaydigan hostinglarda Markaziy bankdan tarixiy ma’lumotlarni server orqali olish imkonini beradi. Statik brauzer interfeysi tayyor JSON fayllarini yuklab, ularni Markaziy bankning joriy javobidagi eng so‘nggi rasmiy kurs bilan to‘ldiradi.
+`api/cbu-history.js` va `api/history.js` ishlov beruvchilari API funksiyalarini qo‘llab-quvvatlaydigan hostinglarda Markaziy bankdan tarixiy ma’lumotlarni server orqali olish imkonini beradi. Statik brauzer interfeysi tayyor JSON fayllarini yuklab, ularni Markaziy bankning joriy javobidagi eng so‘nggi rasmiy kurs bilan to‘ldiradi. Tijorat banklari uchun `data/bank-rates.json` faylini GitHub Actions’dagi `scripts/update-bank-rates.py` vazifasi server API’siz yangilab turadi.
 
 ## 9. Loyiha papkalari va fayllari
 
